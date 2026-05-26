@@ -1,0 +1,39 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cluster-view
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cluster-viewer
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-viewer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: ServiceAccount
+    name: cluster-viewer
+    namespace: kube-system
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cluster-viewer
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: "cluster-viewer"
+type: kubernetes.io/service-account-token

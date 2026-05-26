@@ -1,0 +1,83 @@
+#cloud-config
+package_update: true
+packages:
+  - iptables-persistent
+
+write_files:
+%{ for filename, content in manifests ~}
+  - path: /var/lib/rancher/k3s/server/manifests/${filename}
+    permissions: '0644'
+    content: |
+      ${indent(6, content)}
+%{ endfor ~}
+
+runcmd:
+  - echo "==> Installing OCI CLI..."
+  - curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
+  - ln -s /root/bin/oci /usr/local/bin/oci
+
+  - echo "==> Allowing inbound traffic to required K3s ports..."
+  - |
+    for rule in \
+      "-s ${lb_internal_subnet_cidr} -p tcp --dport 6443 -j ACCEPT" \
+      "-s ${k3s_subnet_cidr} -p udp --dport 8472 -j ACCEPT" \
+      "-s ${k3s_subnet_cidr} -p tcp --dport 10250 -j ACCEPT" \
+      "-s ${lb_internal_subnet_cidr} -p tcp --dport 30000:32767 -j ACCEPT" \
+      "-s ${lb_external_subnet_cidr} -p tcp --dport 30000:32767 -j ACCEPT"
+    do
+      iptables -C INPUT $rule 2>/dev/null || iptables -I INPUT 1 $rule
+    done
+  - netfilter-persistent save
+
+  - echo "==> Starting the K3s server..."
+  - |
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${k3s_version} sh -s - server \
+      --token "${k3s_token}" \
+      --tls-san "${k3s_api_fqdn}" \
+      --tls-san "${k3s_api_lb_ip}" \
+      --node-label k3s.io/role=server \
+      --node-taint CriticalAddonsOnly=true:NoExecute \
+      --datastore-endpoint "${k3s_mysql_endpoint}" \
+      --write-kubeconfig-mode 0644 \
+      --disable traefik \
+      --disable servicelb
+
+  - echo "==> Creating cluster-viewer kubeconfig..."
+  - |
+    until TOKEN=$(
+      k3s kubectl -n kube-system get secret cluster-viewer -o jsonpath='{.data.token}' 2>/dev/null | base64 -d
+    ) && [ -n "$TOKEN" ]; do
+      echo "==> Waiting for cluster-viewer token..."
+      sleep 10
+    done
+
+    CA_DATA=$(k3s kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
+
+    cat <<EOF > /etc/rancher/k3s/${k3s_kubeconfig_object}
+    apiVersion: v1
+    kind: Config
+    clusters:
+    - cluster:
+        certificate-authority-data: $CA_DATA
+        server: https://${k3s_api_fqdn}:6443
+      name: ${k3s_api_fqdn}
+    contexts:
+    - context:
+        cluster: ${k3s_api_fqdn}
+        user: ${k3s_api_fqdn}-cluster-viewer
+      name: ${k3s_api_fqdn}
+    current-context: ${k3s_api_fqdn}
+    users:
+    - name: ${k3s_api_fqdn}-cluster-viewer
+      user:
+        token: $TOKEN
+    EOF
+
+  - echo "==> Uploading cluster-viewer kubeconfig to object storage..."
+  - |
+    oci os object put \
+      --auth instance_principal \
+      --bucket-name "${k3s_kubeconfigs_bucket}" \
+      --name "${k3s_kubeconfig_object}" \
+      --file /etc/rancher/k3s/${k3s_kubeconfig_object} \
+      --force
