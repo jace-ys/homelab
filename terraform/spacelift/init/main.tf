@@ -10,7 +10,7 @@ resource "spacelift_stack" "spacelift_root" {
   terraform_version                = "1.12.0"
   autodeploy                       = true
   enable_local_preview             = true
-  protect_from_deletion            = false
+  protect_from_deletion            = true
   terraform_smart_sanitization     = true
   enable_well_known_secret_masking = true
 

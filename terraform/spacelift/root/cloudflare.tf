@@ -34,6 +34,17 @@ resource "spacelift_context" "terraform_provider_cloudflare" {
 
 resource "spacelift_environment_variable" "terraform_provider_cloudflare" {
   for_each = {
+    email = "jaceystan@gmail.com"
+  }
+
+  context_id = spacelift_context.terraform_provider_cloudflare.id
+  name       = "TF_VAR_cloudflare_${each.key}"
+  value      = each.value
+  write_only = false
+}
+
+resource "spacelift_environment_variable" "terraform_provider_cloudflare_wo" {
+  for_each = {
     account_id = local.secrets.cloudflare.account_id
     api_token  = local.secrets.cloudflare.api_token
   }
