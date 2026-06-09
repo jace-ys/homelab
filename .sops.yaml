@@ -1,0 +1,5 @@
+creation_rules:
+  - age: age14pafzxtjjtk9md05k2tv2w5js043ysq250jszm55njpufe5dacvq3z3jms
+
+secrets:
+  - data/secrets.yaml
