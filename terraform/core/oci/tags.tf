@@ -51,7 +51,7 @@ resource "oci_identity_tag" "infra_environment" {
 
   validator {
     validator_type = "ENUM"
-    values         = ["root"]
+    values         = concat(["root"], distinct([for k, v in local.cells : v.environment]))
   }
 }
 
