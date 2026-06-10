@@ -22,7 +22,7 @@ spec:
         {{- end }}
         values:
           syncWave: '{{ "{{" }} index (splitList "-" (index .path.segments 2)) 0 {{ "}}" }}'
-          project: '{{ "{{" }} index (splitList "-" (index .path.path 2)) 1 {{ "}}" }}'
+          project: '{{ "{{" }} index (splitList "-" (index .path.segments 2)) 1 {{ "}}" }}'
   template:
     metadata:
       name: {{`"{{.path.basename}}"`}}
