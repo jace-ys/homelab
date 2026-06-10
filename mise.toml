@@ -1,0 +1,51 @@
+[tools]
+age = "1.3.1"
+helmfile = "1.5.3"
+kustomize = "5.8.1"
+oci = "3.86.0"
+opentofu = "1.12.1"
+sops = "3.13.1"
+spacectl = "1.22.0"
+
+[env]
+SOPS_AGE_KEY = { required = true }
+SPACELIFT_API_KEY_ENDPOINT = "https://jace-ys.app.spacelift.io"
+SPACELIFT_API_KEY_ID = "01KRRVTGGETX67C7RPAWZ7QCDX"
+SPACELIFT_API_KEY_SECRET = { required = true }
+
+[env._]
+file = ".env"
+source = ["./scripts/merge-k3s-kubeconfigs.sh"]
+
+[tasks.tofu-fmt]
+run = "tofu fmt -recursive terraform"
+
+[tasks.tofu-init]
+usage = '''
+flag "--upgrade"
+'''
+run = '''
+for dir in $(find terraform -type f -name '*.tf' -exec dirname {} \; | sort -u); do
+  tofu -chdir="$dir" init {% if usage.upgrade %}-upgrade{% endif %}
+done
+'''
+
+[tasks.spacelift-init]
+dir = "terraform/spacelift/init"
+run = "tofu"
+
+[tasks.kubeconfigs-fetch]
+run = "./scripts/fetch-k3s-kubeconfigs.sh"
+
+[tasks.mkcell]
+usage = '''
+arg "<dir>"
+'''
+run = '''
+mkdir -p "{{ usage.dir }}"
+jq -n '{spacelift:{managed:true}}' > "{{ usage.dir }}/cell.json"
+'''
+
+[tasks.mkdev]
+dir = "terraform/environments/dev/uk-london-1/cell-01"
+run = "tofu"
