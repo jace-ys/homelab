@@ -14,4 +14,7 @@ locals {
   lb_external_subnet_cidr = "10.0.0.0/24"
   lb_internal_subnet_cidr = "10.0.1.0/24"
   k3s_subnet_cidr         = "10.0.2.0/24"
+
+  k3s_cluster_name = "k3s.${var.cell_id}"
+  k3s_cluster_fqdn = "k3s.${var.base_domain_internal}"
 }

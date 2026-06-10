@@ -13,3 +13,19 @@ output "compartment" {
     name = data.oci_identity_compartment.cell.name
   }
 }
+
+output "k3s" {
+  value = {
+    cluster = {
+      name = local.k3s_cluster_name
+      url  = "https://${local.k3s_cluster_fqdn}:6443"
+    }
+    kubeconfig = {
+      bucket = oci_objectstorage_bucket.k3s_kubeconfigs.name
+      objects = [
+        "${local.k3s_cluster_name}-cluster-admin.yaml",
+        "${local.k3s_cluster_name}-cluster-viewer.yaml",
+      ]
+    }
+  }
+}
