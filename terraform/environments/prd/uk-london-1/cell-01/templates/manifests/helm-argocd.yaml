@@ -1,0 +1,209 @@
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: argocd
+  namespace: kube-system
+spec:
+  targetNamespace: argocd
+  createNamespace: true
+  repo: https://argoproj.github.io/argo-helm
+  chart: argo-cd
+  version: ${argocd_version}
+  bootstrap: true
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: argocd
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    global:
+      domain: argocd.${base_domain_internal}
+      logging:
+        format: json
+      networkPolicy:
+        create: true
+      priorityClassName: system-cluster-critical
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: "true"
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+
+    configs:
+      cm:
+        admin.enabled: false
+        accounts.${argocd_username}: apiKey, login
+      rbac:
+        policy.csv: |
+          g, ${argocd_username}, role:admin
+      secret:
+        extra:
+          accounts.${argocd_username}.password: ${argocd_password}
+      params:
+        server.insecure: "true"
+        reposerver.plugin.use.manifest.generate.paths: "true"
+      cmp:
+        create: true
+        plugins:
+          cmp-helmfile:
+            generate:
+              command: ["sh", "-c"]
+              args:
+              - |
+                helmfile template --quiet --environment $K3S_CLUSTER_NAME
+            discover:
+              fileName: helmfile.yaml*
+
+    controller:
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          cpu: 20m
+          memory: 256Mi
+
+    dex:
+      enabled: false
+
+    redis:
+      resources:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi
+      livenessProbe:
+        enabled: true
+      readinessProbe:
+        enabled: true
+
+    server:
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          cpu: 20m
+          memory: 256Mi
+
+    repoServer:
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          cpu: 20m
+          memory: 256Mi
+      extraContainers:
+        - name: cmp-helmfile
+          image: ghcr.io/helmfile/helmfile:v1.5.2
+          command: [/var/run/argocd/argocd-cmp-server]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+          env:
+            - name: K3S_CLUSTER_NAME
+              value: ${k3s_cluster_name}
+            - name: BASE_DOMAIN_EXTERNAL
+              value: ${base_domain_external}
+            - name: BASE_DOMAIN_INTERNAL
+              value: ${base_domain_internal}
+            - name: HELM_CACHE_HOME
+              value: /tmp/helm
+            - name: HELMFILE_CACHE_HOME
+              value: /tmp/helmfile
+            - name: HELMFILE_TEMPDIR
+              value: /tmp/helmfile
+          volumeMounts:
+            - mountPath: /var/run/argocd
+              name: var-files
+            - mountPath: /home/argocd/cmp-server/plugins
+              name: plugins
+            - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+              subPath: cmp-helmfile.yaml
+              name: argocd-cmp-cm
+            - mountPath: /tmp
+              name: cmp-tmp
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 20m
+              memory: 256Mi
+      volumes:
+      - name: argocd-cmp-cm
+        configMap:
+          name: argocd-cmp-cm
+      - name: cmp-tmp
+        emptyDir: {}
+
+    applicationSet:
+      resources:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi
+      livenessProbe:
+        enabled: true
+      readinessProbe:
+        enabled: true
+
+    notifications:
+      enabled: false
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`argocd.${base_domain_internal}`)
+      priority: 10
+      services:
+        - kind: Service
+          name: argocd-server
+          port: http
+    - kind: Rule
+      match: Host(`argocd.${base_domain_internal}`) && Header(`Content-Type`, `application/grpc`)
+      priority: 11
+      services:
+        - name: argocd-server
+          port: http
+          scheme: h2c
+  tls:
+    certResolver: letsencrypt
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-root
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/manifest-generate-paths: .;/kubernetes/charts;/kubernetes/bases
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  project: default
+  source:
+    repoURL: https://github.com/jace-ys/homelab.git
+    targetRevision: HEAD
+    path: kubernetes/apps/00-bootstrap/argocd
+    plugin: {}
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

@@ -29,3 +29,10 @@ output "k3s" {
     }
   }
 }
+
+output "argocd" {
+  value = {
+    url      = "https://argocd.${var.base_domain_internal}"
+    username = local.argocd_username
+  }
+}
