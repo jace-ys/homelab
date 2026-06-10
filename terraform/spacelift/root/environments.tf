@@ -10,6 +10,7 @@ locals {
       region      = split("/", dir)[1]
       name        = split("/", dir)[2]
       id          = "${split("/", dir)[2]}.${split("/", dir)[1]}.${split("/", dir)[0]}"
+      components  = try(jsondecode(file("${path.module}/../../environments/${dir}/cell.json")).components, [])
     }
   }
 }
@@ -31,16 +32,20 @@ resource "spacelift_stack" "cell" {
   terraform_smart_sanitization     = true
   enable_well_known_secret_masking = true
 
-  labels = [
-    "feature:add_plan_pr_comment",
-    "folder:${each.value.environment}/${each.value.region}",
-    "terraform-provider-oci",
-    "terraform-provider-cloudflare",
-    "sops-enabled",
-    "ssh-enabled",
-    "environment:${each.value.environment}",
-    "region:${each.value.region}",
-  ]
+  labels = concat(
+    [
+      "feature:add_plan_pr_comment",
+      "folder:${each.value.environment}/${each.value.region}/${each.value.name}",
+      "terraform-provider-oci",
+      "terraform-provider-cloudflare",
+      "sops-enabled",
+      "ssh-enabled",
+      "environment:${each.value.environment}",
+      "region:${each.value.region}",
+      "cell:${each.value.name}",
+    ],
+    [for c in each.value.components : "component:${c}"],
+  )
 }
 
 resource "spacelift_stack_dependency" "cell_oci" {
