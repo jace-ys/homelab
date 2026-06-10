@@ -69,7 +69,7 @@ spec:
       letsencrypt:
         acme:
           email: ${cloudflare_email}
-          caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+          caServer: https://acme-v02.api.letsencrypt.org/directory
           storage: /data/acme.json
           dnsChallenge:
             provider: cloudflare
