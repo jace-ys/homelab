@@ -1,0 +1,41 @@
+---
+templates:
+  release:
+    missingFileHandler: Warn
+    values:
+      {{- range .StateValues.paths }}
+      - values{{ . }}/{{`{{ .Release.Name }}`}}.yaml.gotmpl
+      - values{{ . }}/{{`{{ .Release.Name }}`}}.yaml
+      {{- end }}
+
+  patches:
+    {{- $paths := .StateValues.paths }}
+    {{- range list
+      (dict "helmKey" "transformers" "yaml" "transformers.yaml" "gotmpl" "transformers.yaml.gotmpl")
+      (dict "helmKey" "strategicMergePatches" "yaml" "merge-patch.yaml" "gotmpl" "merge-patch.yaml.gotmpl")
+      (dict "helmKey" "jsonPatches" "yaml" "json-patch.yaml" "gotmpl" "json-patch.yaml.gotmpl")
+    }}
+    {{- $kind := . }}
+    {{- $files := list }}
+    {{- range $paths }}
+    {{- $base := printf "patches%s" . }}
+    {{- if isFile (printf "%s/%s" $base $kind.yaml) }}
+    {{- $files = append $files (printf "%s/%s" $base $kind.yaml) }}
+    {{- end }}
+    {{- if isFile (printf "%s/%s" $base $kind.gotmpl) }}
+    {{- $files = append $files (printf "%s/%s" $base $kind.gotmpl) }}
+    {{- end }}
+    {{- end }}
+    {{- if $files }}
+    {{ $kind.helmKey }}:
+    {{- range $files }}
+    - {{ . }}
+    {{- end }}
+    {{- else }}
+    {{ $kind.helmKey }}: []
+    {{- end }}
+    {{- end }}
+
+defaultInherit:
+  - release
+  - patches

@@ -1,0 +1,34 @@
+{{- range $name, $cfg := .Values.argocd.projects }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $name }}
+  namespace: argocd
+spec:
+  sourceRepos:
+    - {{ required "argocd.apps.repoURL is required" $.Values.argocd.apps.repoURL }}
+  destinations:
+    {{- if $cfg.allowedNamespaces }}
+    - namespace: default
+      server: https://kubernetes.default.svc
+    - namespace: "!argocd"
+      server: https://kubernetes.default.svc
+    {{- range $cfg.allowedNamespaces }}
+    - namespace: {{ quote . }}
+      server: https://kubernetes.default.svc
+    {{- end }}
+    {{- else }}
+    - namespace: default
+      server: https://kubernetes.default.svc
+    - namespace: "!argocd"
+      server: https://kubernetes.default.svc
+    {{- end }}
+  clusterResourceWhitelist:
+    {{- if $cfg.allowedResources }}
+    {{- toYaml $cfg.allowedResources | nindent 4 }}
+    {{- else }}
+    - group: "*"
+      kind: "*"
+    {{- end }}
+{{- end }}

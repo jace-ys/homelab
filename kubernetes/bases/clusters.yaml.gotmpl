@@ -1,0 +1,51 @@
+---
+values:
+  - clusters:
+      k3s.cell-01.uk-london-1.dev:
+        labels:
+          name: k3s.cell-01.uk-london-1.dev
+          environment: dev
+          region: uk-london-1
+          cell: cell-01
+      k3s.cell-01.uk-london-1.stg:
+        labels:
+          name: k3s.cell-01.uk-london-1.stg
+          environment: stg
+          region: uk-london-1
+          cell: cell-01
+          cloud: oci
+      k3s.cell-01.uk-london-1.prd:
+        labels:
+          name: k3s.cell-01.uk-london-1.prd
+          environment: prd
+          region: uk-london-1
+          cell: cell-01
+          cloud: oci
+---
+{{- $cluster := index .StateValues.clusters .Environment.Name | required "cluster not found" }}
+environments:
+  {{ .Environment.Name }}:
+    values:
+      {{- $paths := list "" }}
+      {{- $acc := list }}
+      {{- if hasKey .StateValues "hierarchy" }}
+      {{- range $label := .StateValues.hierarchy }}
+      {{- $value := index $cluster.labels $label }}
+      {{- if $value }}
+      {{- $acc = append $acc $value }}
+      {{- $paths = append $paths (printf "/%s" (join "/" $acc)) }}
+      {{- else }}
+      {{- break }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      - paths:
+      {{- range $paths }}
+          - {{ . | quote }}
+      {{- end }}
+      - cluster:
+          domains:
+            external: {{ env "BASE_DOMAIN_EXTERNAL" | default "external.example.com" }}
+            internal: {{ env "BASE_DOMAIN_INTERNAL" | default "internal.example.com" }}
+          labels:
+            {{- toYaml $cluster.labels | trim | nindent 12 }}
