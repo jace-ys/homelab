@@ -1,0 +1,26 @@
+argocd:
+  apps:
+    repoURL: https://github.com/jace-ys/homelab.git
+
+    watchedDirs:
+      - path: kubernetes/apps/*/*
+      - path: kubernetes/apps/00-bootstrap/argocd
+        exclude: true
+
+    annotations:
+      argocd.argoproj.io/manifest-generate-paths: .;/kubernetes/charts;/kubernetes/bases
+
+    syncPolicy:
+      automated:
+        enabled: true
+        prune: true
+        selfHeal: true
+      syncOptions:
+        - ServerSideApply=true
+
+  projects:
+    apps:
+      allowedNamespaces:
+        - "!kube-node-lease"
+        - "!kube-public"
+        - "!kube-system"

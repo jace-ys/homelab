@@ -1,0 +1,10 @@
+---
+bases:
+  - ../../../bases/clusters.yaml.gotmpl
+---
+bases:
+  - ../../../bases/releases.yaml.gotmpl
+
+releases:
+  - name: argocd
+    chart: ../../../charts/argocd

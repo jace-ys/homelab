@@ -1,0 +1,13 @@
+argocd:
+  projects:
+    {{- range $index, $entry := readDirEntries "../../../" }}
+    {{- if $entry.IsDir }}
+    {{- $name := splitList "-" $entry.Name }}
+    {{- if ne (len $name) 2 }}
+    {{- fail (printf "invalid directory name for project %q" $entry.Name) }}
+    {{- end }}
+    {{ index $name 1 }}:
+      allowedNamespaces: {}
+      allowedResources: {}
+    {{- end }}
+    {{- end }}

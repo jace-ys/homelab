@@ -1,0 +1,17 @@
+---
+values:
+  - hierarchy:
+      - cloud
+      - environment
+---
+bases:
+  - ../../../bases/clusters.yaml.gotmpl
+---
+bases:
+  - ../../../bases/releases.yaml.gotmpl
+
+releases:
+  - name: podinfo
+    chart: oci://ghcr.io/stefanprodan/charts/podinfo
+    namespace: default
+    version: 6.12.0

@@ -1,0 +1,4 @@
+{{- range $key, $resource := .Values.resources }}
+---
+{{ tpl $resource $ }}
+{{- end }}

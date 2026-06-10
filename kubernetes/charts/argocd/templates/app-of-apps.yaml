@@ -1,0 +1,48 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: app-of-apps
+  namespace: argocd
+spec:
+  ignoreApplicationDifferences:
+    - jsonPointers:
+        - /spec/syncPolicy
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: {{ required "argocd.apps.repoURL is required" .Values.argocd.apps.repoURL }}
+        revision: HEAD
+        {{- if .Values.argocd.apps.watchedDirs }}
+        directories:
+          {{- toYaml .Values.argocd.apps.watchedDirs | nindent 10 }}
+        {{- else }}
+        {{- fail "argocd.apps.watchedDirs is required" }}
+        {{- end }}
+        values:
+          syncWave: '{{ "{{" }} index (splitList "-" (index .path.segments 2)) 0 {{ "}}" }}'
+          project: '{{ "{{" }} index (splitList "-" (index .path.path 2)) 1 {{ "}}" }}'
+  template:
+    metadata:
+      name: {{`"{{.path.basename}}"`}}
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: {{`"{{.values.syncWave}}"`}}
+        {{- if .Values.argocd.apps.annotations }}
+        {{- toYaml .Values.argocd.apps.annotations | nindent 8 }}
+        {{- end }}
+    spec:
+      project: {{`"{{.values.project}}"`}}
+      source:
+        repoURL: {{ required "argocd.apps.repoURL is required" .Values.argocd.apps.repoURL }}
+        targetRevision: HEAD
+        path: {{`"{{.path.path}}"`}}
+        plugin: {}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      {{- with .Values.argocd.apps.syncPolicy }}
+      syncPolicy:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
