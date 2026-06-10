@@ -23,8 +23,8 @@ output "k3s" {
     kubeconfig = {
       bucket = oci_objectstorage_bucket.k3s_kubeconfigs.name
       objects = [
-        "${local.k3s_cluster_name}-cluster-admin.yaml",
-        "${local.k3s_cluster_name}-cluster-viewer.yaml",
+        "${local.k3s_cluster_name}_cluster-admin.yaml",
+        "${local.k3s_cluster_name}_cluster-viewer.yaml",
       ]
     }
   }
