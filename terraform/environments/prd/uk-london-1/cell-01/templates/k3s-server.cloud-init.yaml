@@ -41,7 +41,6 @@ runcmd:
       --tls-san "${k3s_api_lb_ip}" \
       --node-label k3s.io/node-role=server \
       --node-taint node-role.kubernetes.io/control-plane:NoSchedule \
-      --write-kubeconfig-mode 0644 \
       --disable servicelb \
       --disable-cloud-controller \
       --kubelet-arg cloud-provider=external \
