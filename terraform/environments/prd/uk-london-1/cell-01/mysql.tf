@@ -22,9 +22,3 @@ resource "oci_mysql_mysql_db_system" "k3s" {
 
   depends_on = [oci_identity_policy.mysqldbsystem]
 }
-
-resource "oci_mysql_heat_wave_cluster" "k3s" {
-  db_system_id = oci_mysql_mysql_db_system.k3s.id
-  shape_name   = "HeatWave.Free"
-  cluster_size = 1
-}
