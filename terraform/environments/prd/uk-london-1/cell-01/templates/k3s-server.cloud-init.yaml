@@ -1,0 +1,90 @@
+#cloud-config
+package_update: true
+packages:
+  - iptables-persistent
+
+write_files:
+%{ for filename, content in manifests ~}
+  - path: /var/lib/rancher/k3s/server/manifests/${filename}
+    permissions: '0644'
+    content: |
+      ${indent(6, content)}
+%{ endfor ~}
+
+runcmd:
+  - echo "==> Installing OCI CLI..."
+  - curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
+  - ln -s /root/bin/oci /usr/local/bin/oci
+
+  - echo "==> Allowing inbound traffic to required K3s ports..."
+  - |
+    for rule in \
+      "-s ${lb_external_subnet_cidr} -p tcp --dport 30000:32767 -j ACCEPT" \
+      "-s ${lb_internal_subnet_cidr} -p tcp --dport 6443 -j ACCEPT" \
+      "-s ${lb_internal_subnet_cidr} -p tcp --dport 30000:32767 -j ACCEPT" \
+      "-s ${k3s_subnet_cidr} -p tcp --dport 6443 -j ACCEPT" \
+      "-s ${k3s_subnet_cidr} -p udp --dport 8472 -j ACCEPT" \
+      "-s ${k3s_subnet_cidr} -p tcp --dport 10250 -j ACCEPT"
+    do
+      iptables -C INPUT $rule 2>/dev/null || iptables -I INPUT 1 $rule
+    done
+  - netfilter-persistent save
+
+  - echo "==> Starting the K3s server..."
+  - |
+    INSTANCE_OCID=$(curl -sf -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/instance/id)
+
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${k3s_version} sh -s - server \
+      --token "${k3s_token}" \
+      --datastore-endpoint "${k3s_mysql_endpoint}"
+      --tls-san "${k3s_cluster_fqdn}" \
+      --tls-san "${k3s_api_lb_ip}" \
+      --node-label k3s.io/node-role=server \
+      --node-taint node-role.kubernetes.io/control-plane:NoSchedule \
+      --write-kubeconfig-mode 0644 \
+      --disable servicelb \
+      --disable-cloud-controller \
+      --kubelet-arg cloud-provider=external \
+      --kubelet-arg provider-id=$INSTANCE_OCID
+
+%{ for role in ["cluster-admin", "cluster-viewer"] ~}
+  - echo "==> Creating ${role} kubeconfig..."
+  - |
+    until TOKEN=$(
+      k3s kubectl -n kube-system get secret ${role} -o jsonpath='{.data.token}' 2>/dev/null | base64 -d
+    ) && [ -n "$TOKEN" ]; do
+      echo "==> Waiting for ${role} token..."
+      sleep 10
+    done
+
+    CA_DATA=$(k3s kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}')
+
+    cat <<-EOF > /etc/rancher/k3s/${k3s_cluster_name}_${role}.yaml
+    apiVersion: v1
+    kind: Config
+    clusters:
+    - name: ${k3s_cluster_name}
+      cluster:
+        certificate-authority-data: $CA_DATA
+        server: https://${k3s_cluster_fqdn}:6443
+    contexts:
+    - name: ${k3s_cluster_name}/${role}
+      context:
+        cluster: ${k3s_cluster_name}
+        user: ${role}
+    current-context: ${k3s_cluster_name}/${role}
+    users:
+    - name: ${role}
+      user:
+        token: $TOKEN
+    EOF
+
+  - echo "==> Uploading ${role} kubeconfig to object storage..."
+  - |
+    oci os object put \
+      --auth instance_principal \
+      --bucket-name "${k3s_kubeconfigs_bucket}" \
+      --name "${k3s_cluster_name}_${role}.yaml" \
+      --file /etc/rancher/k3s/${k3s_cluster_name}_${role}.yaml \
+      --force
+%{ endfor ~}

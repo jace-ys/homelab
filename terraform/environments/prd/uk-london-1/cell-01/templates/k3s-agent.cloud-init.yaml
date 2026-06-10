@@ -1,0 +1,35 @@
+#cloud-config
+package_update: true
+packages:
+  - iptables-persistent
+
+runcmd:
+  - echo "==> Allowing inbound traffic to required K3s ports..."
+  - |
+    for rule in \
+      "-s ${lb_external_subnet_cidr} -p tcp --dport 30000:32767 -j ACCEPT" \
+      "-s ${lb_internal_subnet_cidr} -p tcp --dport 30000:32767 -j ACCEPT" \
+      "-s ${k3s_subnet_cidr} -p udp --dport 8472 -j ACCEPT" \
+      "-s ${k3s_subnet_cidr} -p tcp --dport 10250 -j ACCEPT"
+    do
+      iptables -C INPUT $rule 2>/dev/null || iptables -I INPUT 1 $rule
+    done
+  - netfilter-persistent save
+
+  - echo "==> Waiting for K3s server to initialize..."
+  - |
+    until curl -ksSf -o /dev/null https://${k3s_api_lb_ip}:6443/cacerts 2>/dev/null; do
+      echo "==> K3s server is not yet responding. Retrying in 10 seconds..."
+      sleep 10
+    done
+
+  - echo "==> K3s server is up and responding! Joining K3s cluster..."
+  - |
+    INSTANCE_OCID=$(curl -sf -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/instance/id)
+
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${k3s_version} sh -s - agent \
+      --server "https://${k3s_api_lb_ip}:6443" \
+      --token "${k3s_token}" \
+      --node-label k3s.io/node-role=agent \
+      --kubelet-arg cloud-provider=external \
+      --kubelet-arg provider-id=$INSTANCE_OCID

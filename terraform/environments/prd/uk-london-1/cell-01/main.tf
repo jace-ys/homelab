@@ -17,4 +17,19 @@ locals {
 
   k3s_cluster_name = "k3s.${var.cell_id}"
   k3s_cluster_fqdn = "k3s.${var.base_domain_internal}"
+
+  k3s_version = "v1.35.5+k3s1"
+
+  k3s_server_count = 1
+  k3s_agent_count  = 3
+
+  k3s_node_ocpus  = 1
+  k3s_node_memory = 6
+
+  argocd_version  = "9.5.20"
+  argocd_username = "jacetan"
+}
+
+resource "bcrypt_hash" "argocd_password" {
+  cleartext = local.secrets.argocd.password
 }

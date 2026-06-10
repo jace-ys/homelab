@@ -2,9 +2,17 @@ terraform {
   required_version = "~> 1.12"
 
   required_providers {
+    bcrypt = {
+      source  = "viktorradnai/bcrypt"
+      version = "~> 0.1"
+    }
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "~> 5.19"
+    }
+    kustomization = {
+      source  = "kbst/kustomization"
+      version = "~> 0.9"
     }
     oci = {
       source  = "oracle/oci"
@@ -27,4 +35,12 @@ provider "oci" {
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
+}
+
+provider "kustomization" {
+  kubeconfig_raw = ""
+}
+
+locals {
+  secrets = try(yamldecode(file("${path.module}/data/secrets.yaml")), {})
 }
