@@ -36,7 +36,7 @@ runcmd:
 
     curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${k3s_version} sh -s - server \
       --token "${k3s_token}" \
-      --datastore-endpoint "${k3s_mysql_endpoint}"
+      --datastore-endpoint "${k3s_mysql_endpoint}" \
       --tls-san "${k3s_cluster_fqdn}" \
       --tls-san "${k3s_api_lb_ip}" \
       --node-label k3s.io/node-role=server \
