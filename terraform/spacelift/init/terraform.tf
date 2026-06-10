@@ -10,8 +10,6 @@ terraform {
 }
 
 provider "spacelift" {
-  api_key_endpoint = "https://jace-ys.app.spacelift.io"
-  api_key_id       = "01KRRVTGGETX67C7RPAWZ7QCDX"
 }
 
 data "spacelift_space" "root" {

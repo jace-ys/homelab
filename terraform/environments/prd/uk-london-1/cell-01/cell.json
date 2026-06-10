@@ -1,5 +1,8 @@
 {
   "spacelift": {
     "managed": true
-  }
+  },
+  "components": [
+    "k3s"
+  ]
 }
