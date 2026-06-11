@@ -189,6 +189,7 @@ metadata:
   name: argocd-root
   namespace: argocd
   annotations:
+    argocd-diff-preview/render: always
     argocd.argoproj.io/manifest-generate-paths: .;/kubernetes/charts;/kubernetes/bases
 spec:
   destination:

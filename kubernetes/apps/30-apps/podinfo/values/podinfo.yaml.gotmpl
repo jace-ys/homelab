@@ -1,6 +1,13 @@
 ui:
   message: "Hello from podinfo.{{ .StateValues.cluster.domains.internal }}!"
 
+resources:
+  limits:
+    memory: 16Mi
+  requests:
+    cpu: 2m
+    memory: 16Mi
+
 ingress:
   enabled: true
   className: traefik
