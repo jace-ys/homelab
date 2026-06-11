@@ -17,13 +17,16 @@ templates:
     }}
     {{- $kind := . }}
     {{- $files := list }}
+    {{- if eq $kind.helmKey "transformers" }}
+    {{- $files = append $files "../../../bases/patches/transformers.yaml.gotmpl" }}
+    {{- end }}
     {{- range $paths }}
     {{- $base := printf "patches%s" . }}
-    {{- if isFile (printf "%s/%s" $base $kind.yaml) }}
-    {{- $files = append $files (printf "%s/%s" $base $kind.yaml) }}
-    {{- end }}
     {{- if isFile (printf "%s/%s" $base $kind.gotmpl) }}
     {{- $files = append $files (printf "%s/%s" $base $kind.gotmpl) }}
+    {{- end }}
+    {{- if isFile (printf "%s/%s" $base $kind.yaml) }}
+    {{- $files = append $files (printf "%s/%s" $base $kind.yaml) }}
     {{- end }}
     {{- end }}
     {{- if $files }}
