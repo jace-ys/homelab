@@ -1,0 +1,138 @@
+name: Argo CD Diff Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "kubernetes/**"
+
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    outputs:
+      clusters: ${{ steps.discover.outputs.clusters }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Discover clusters
+        id: discover
+        run: |
+          CLUSTERS=$(yq '.values[0].clusters | keys' kubernetes/bases/clusters.yaml -o json | jq -c)
+          echo "clusters=$CLUSTERS" >> "$GITHUB_OUTPUT"
+
+  diff:
+    needs: setup
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        cluster: ${{ fromJSON(needs.setup.outputs.clusters) }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: pull-request
+
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          path: main
+
+      - name: Set Argo CD custom values
+        run: |
+          cat > values.yaml << "EOF"
+          configs:
+            params:
+              reposerver.plugin.use.manifest.generate.paths: "true"
+            cmp:
+              create: true
+              plugins:
+                cmp-helmfile:
+                  generate:
+                    command: ["sh", "-c"]
+                    args:
+                    - |
+                      helmfile template --quiet --environment $K3S_CLUSTER_NAME
+                  discover:
+                    fileName: helmfile.yaml*
+
+          repoServer:
+            extraContainers:
+              - name: cmp-helmfile
+                image: ghcr.io/helmfile/helmfile:v1.5.2
+                command: [/var/run/argocd/argocd-cmp-server]
+                securityContext:
+                  runAsNonRoot: true
+                  runAsUser: 999
+                env:
+                  - name: K3S_CLUSTER_NAME
+                    value: ${{ matrix.cluster }}
+                  - name: HELM_CACHE_HOME
+                    value: /tmp/helm
+                  - name: HELMFILE_CACHE_HOME
+                    value: /tmp/helmfile
+                  - name: HELMFILE_TEMPDIR
+                    value: /tmp/helmfile
+                volumeMounts:
+                  - mountPath: /var/run/argocd
+                    name: var-files
+                  - mountPath: /home/argocd/cmp-server/plugins
+                    name: plugins
+                  - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+                    subPath: cmp-helmfile.yaml
+                    name: argocd-cmp-cm
+                  - mountPath: /tmp
+                    name: cmp-tmp
+            volumes:
+              - name: argocd-cmp-cm
+                configMap:
+                  name: argocd-cmp-cm
+              - name: cmp-tmp
+                emptyDir: {}
+          EOF
+
+      - name: Generate diff
+        run: |
+          docker run \
+            --network=host \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $(pwd)/main:/base-branch \
+            -v $(pwd)/pull-request:/target-branch \
+            -v $(pwd)/output:/output \
+            -v $(pwd)/values.yaml:/argocd-config/values.yaml \
+            -e TARGET_BRANCH=refs/pull/${{ github.event.number }}/merge \
+            -e REPO=${{ github.repository }} \
+            -e ARGOCD_CHART_VERSION=9.5.20 \
+            -e TITLE='Argo CD Diff Preview (`${{ matrix.cluster }}`)' \
+            dagandersen/argocd-diff-preview:v0.2.10
+
+      - name: Upload diff
+        uses: actions/upload-artifact@v7
+        with:
+          name: diff-${{ matrix.cluster }}
+          path: output/diff.md
+          retention-days: 1
+          if-no-files-found: error
+
+  comment:
+    needs: diff
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: diff-*
+          merge-multiple: false
+          path: output
+
+      - name: Post combined comment
+        run: |
+          gh pr comment ${{ github.event.number }} \
+            --repo ${{ github.repository }} \
+            --body "$(cat output/*/diff.md)" \
+            --edit-last \
+            --create-if-none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

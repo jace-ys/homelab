@@ -1,11 +1,11 @@
 ---
+bases:
+  - ../../../bases/clusters.yaml
+
 values:
   - hierarchy:
       - cloud
       - environment
----
-bases:
-  - ../../../bases/clusters.yaml.gotmpl
 ---
 bases:
   - ../../../bases/releases.yaml.gotmpl

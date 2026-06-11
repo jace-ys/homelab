@@ -1,4 +1,32 @@
 ---
+{{- $cluster := index .StateValues.clusters .Environment.Name | required "cluster not found" }}
+environments:
+  {{ .Environment.Name }}:
+    values:
+      {{- $paths := list "" }}
+      {{- $acc := list }}
+      {{- if hasKey .StateValues "hierarchy" }}
+      {{- range $label := .StateValues.hierarchy }}
+      {{- with index $cluster.labels $label }}
+      {{- $acc = append $acc . }}
+      {{- $paths = append $paths (printf "/%s" (join "/" $acc)) }}
+      {{- else }}
+      {{- break }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      - paths:
+      {{- range $paths }}
+          - {{ . | quote }}
+      {{- end }}
+      - cluster:
+          name: {{ .Environment.Name }}
+          labels:
+            {{- toYaml $cluster.labels | trim | nindent 12 }}
+          domains:
+            external: {{ env "BASE_DOMAIN_EXTERNAL" | default "external.example.com" }}
+            internal: {{ env "BASE_DOMAIN_INTERNAL" | default "internal.example.com" }}
+---
 templates:
   release:
     missingFileHandler: Warn
@@ -32,7 +60,7 @@ templates:
     {{- if $files }}
     {{ $kind.helmKey }}:
     {{- range $files }}
-    - {{ . }}
+      - {{ . }}
     {{- end }}
     {{- else }}
     {{ $kind.helmKey }}: []
