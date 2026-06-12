@@ -26,7 +26,7 @@ locals {
   k3s_node_ocpus  = 1
   k3s_node_memory = 6
 
-  argocd_version  = "9.5.20"
+  argocd_version  = "9.5.21"
   argocd_username = "jacetan"
 }
 

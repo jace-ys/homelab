@@ -101,11 +101,14 @@ jobs:
             -v $(pwd)/pull-request:/target-branch \
             -v $(pwd)/output:/output \
             -v $(pwd)/values.yaml:/argocd-config/values.yaml \
-            -e TARGET_BRANCH=refs/pull/${{ github.event.number }}/merge \
-            -e REPO=${{ github.repository }} \
-            -e ARGOCD_CHART_VERSION=9.5.20 \
-            -e TITLE='Argo CD Diff Preview (`${{ matrix.cluster }}`)' \
-            dagandersen/argocd-diff-preview:v0.2.10
+            dagandersen/argocd-diff-preview:v0.2.10 \
+            --argocd-chart-version 9.5.21 \
+            --title 'Argo CD Diff (`${{ matrix.cluster }}`)' \
+            --repo ${{ github.repository }} \
+            --target-branch refs/pull/${{ github.event.number }}/merge \
+            --render-method repo-server-api \
+            --traverse-app-of-apps \
+            --file-regex "terraform/environments/.*/helm-argocd.yaml$"
 
       - name: Upload diff
         uses: actions/upload-artifact@v7
@@ -129,9 +132,13 @@ jobs:
 
       - name: Post combined comment
         run: |
+          cat output/*/diff.md > comment.md
+          echo "" >> comment.md
+          echo "---" >> comment.md
+          echo "<sub>Commit: ${{ github.event.pull_request.head.sha }}</sub>" >> comment.md
           gh pr comment ${{ github.event.number }} \
             --repo ${{ github.repository }} \
-            --body "$(cat output/*/diff.md)" \
+            --body-file comment.md \
             --edit-last \
             --create-if-none
         env:
