@@ -1,6 +1,6 @@
 ---
 bases:
-  - ../../../bases/clusters.yaml.gotmpl
+  - ../../../bases/clusters.yaml
 ---
 bases:
   - ../../../bases/releases.yaml.gotmpl

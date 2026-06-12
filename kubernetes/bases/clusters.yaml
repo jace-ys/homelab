@@ -1,0 +1,20 @@
+---
+values:
+  - clusters:
+      k3s.cell-01.uk-london-1.dev:
+        labels:
+          environment: dev
+          region: uk-london-1
+          cell: cell-01
+      k3s.cell-01.uk-london-1.stg:
+        labels:
+          environment: stg
+          region: uk-london-1
+          cell: cell-01
+          cloud: oci
+      k3s.cell-01.uk-london-1.prd:
+        labels:
+          environment: prd
+          region: uk-london-1
+          cell: cell-01
+          cloud: oci
