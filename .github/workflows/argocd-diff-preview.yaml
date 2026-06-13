@@ -53,6 +53,7 @@ jobs:
                     command: ["sh", "-c"]
                     args:
                     - |
+                      HELMFILE_TEMPDIR=$(mktemp -d /tmp/helmfile/XXXXXXXX)
                       helmfile template --quiet --environment $K3S_CLUSTER_NAME
                   discover:
                     fileName: helmfile.yaml*
