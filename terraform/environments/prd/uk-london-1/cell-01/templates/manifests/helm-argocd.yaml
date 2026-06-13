@@ -87,18 +87,18 @@ spec:
     server:
       resources:
         limits:
-          memory: 256Mi
+          memory: 128Mi
         requests:
           cpu: 20m
-          memory: 256Mi
+          memory: 128Mi
 
     repoServer:
       resources:
         limits:
-          memory: 256Mi
+          memory: 128Mi
         requests:
           cpu: 20m
-          memory: 256Mi
+          memory: 128Mi
       extraContainers:
         - name: cmp-helmfile
           image: ghcr.io/helmfile/helmfile:v1.5.2
