@@ -21,7 +21,7 @@ locals {
   k3s_version = "v1.35.5+k3s1"
 
   k3s_server_count = 1
-  k3s_agent_count  = 3
+  k3s_agent_count  = 1
 
   k3s_node_ocpus  = 1
   k3s_node_memory = 6

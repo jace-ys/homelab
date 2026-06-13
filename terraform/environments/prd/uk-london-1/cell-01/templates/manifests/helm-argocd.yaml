@@ -199,7 +199,7 @@ spec:
   source:
     repoURL: https://github.com/jace-ys/homelab.git
     targetRevision: HEAD
-    path: kubernetes/apps/00-bootstrap/argocd
+    path: kubernetes/apps/00-init/argocd
     plugin: {}
   syncPolicy:
     automated:
