@@ -27,6 +27,10 @@ environments:
             external: {{ env "BASE_DOMAIN_EXTERNAL" | default "external.example.com" }}
             internal: {{ env "BASE_DOMAIN_INTERNAL" | default "internal.example.com" }}
 ---
+helmDefaults:
+  args:
+    - --include-crds
+
 templates:
   release:
     missingFileHandler: Warn
