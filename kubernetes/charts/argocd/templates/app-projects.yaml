@@ -5,6 +5,8 @@ kind: AppProject
 metadata:
   name: {{ $name }}
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
 spec:
   sourceRepos:
     - {{ required "argocd.apps.repoURL is required" $.Values.argocd.apps.repoURL }}

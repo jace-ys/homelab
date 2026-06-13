@@ -4,7 +4,7 @@ argocd:
 
     watchedDirs:
       - path: kubernetes/apps/*/*
-      - path: kubernetes/apps/00-bootstrap/argocd
+      - path: kubernetes/apps/00-init/argocd
         exclude: true
 
     annotations:
@@ -19,8 +19,14 @@ argocd:
         - ServerSideApply=true
 
   projects:
+    core:
+      allowedNamespaces:
+        - kgateway-system
     apps:
       allowedNamespaces:
         - "!kube-node-lease"
         - "!kube-public"
         - "!kube-system"
+
+namespaces:
+  kgateway-system: {}

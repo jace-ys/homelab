@@ -8,8 +8,9 @@ metadata:
   labels:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with $cfg.annotations }}
   annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+    {{- with $cfg.annotations }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
 {{- end }}
