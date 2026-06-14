@@ -1,4 +1,4 @@
-{{- range $name, $cfg := .Values.argocd.projects }}
+{{- range $name, $cfg := .Values.projects }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
@@ -9,7 +9,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-10"
 spec:
   sourceRepos:
-    - {{ required "argocd.apps.repoURL is required" $.Values.argocd.apps.repoURL }}
+    - {{ required "argocd.apps.repoURL is required" $.Values.apps.repoURL }}
   destinations:
     {{- if $cfg.allowedNamespaces }}
     - namespace: default

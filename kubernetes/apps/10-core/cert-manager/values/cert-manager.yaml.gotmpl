@@ -1,3 +1,92 @@
+crds:
+  enabled: true
+
 global:
   leaderElection:
     namespace: {{ .Release.Namespace }}
+  priorityClassName: system-cluster-critical
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "true"
+
+enableCertificateOwnerRef: true
+
+config:
+  enableGatewayAPI: true
+  enableGatewayAPIListenerSet: true
+  featureGates:
+    ListenerSets: true
+
+resources:
+  limits:
+    memory: 64Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+tolerations:
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+
+networkPolicy:
+  enabled: true
+
+webhook:
+  resources:
+    limits:
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+  networkPolicy:
+    enabled: true
+
+cainjector:
+  resources:
+    limits:
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+  networkPolicy:
+    enabled: true
+
+startupapicheck:
+  resources:
+    limits:
+      memory: 32Mi
+    requests:
+      cpu: 5m
+      memory: 32Mi
+
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+prometheus:
+  enabled: false
