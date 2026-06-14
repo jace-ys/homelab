@@ -1,6 +1,9 @@
 ---
 bases:
   - ../../../bases/clusters.yaml
+
+values:
+  - app: argocd
 ---
 bases:
   - ../../../bases/releases.yaml.gotmpl
