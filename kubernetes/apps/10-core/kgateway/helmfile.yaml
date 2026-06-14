@@ -1,0 +1,20 @@
+---
+bases:
+  - ../../../bases/clusters.yaml
+
+values:
+  - hierarchy:
+      - environment
+---
+bases:
+  - ../../../bases/releases.yaml.gotmpl
+
+releases:
+  - name: kgateway-crds
+    chart: oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds
+    version: v2.3.1
+
+  - name: kgateway
+    chart: oci://cr.kgateway.dev/kgateway-dev/charts/kgateway
+    namespace: kgateway-system
+    version: v2.3.1

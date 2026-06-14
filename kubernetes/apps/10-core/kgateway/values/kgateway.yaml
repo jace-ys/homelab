@@ -1,0 +1,20 @@
+controller:
+  priorityClassName: system-cluster-critical
+
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "true"
+
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+  resources:
+    limits:
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
