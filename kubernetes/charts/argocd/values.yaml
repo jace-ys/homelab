@@ -1,12 +1,11 @@
-argocd:
-  apps:
-    repoURL: ""
-    watchedDirs: []
-    annotations: {}
-    syncPolicy:
-      automated:
-        enabled: true
+apps:
+  repoURL: ""
+  watchedDirs: []
+  annotations: {}
+  syncPolicy:
+    automated:
+      enabled: true
 
-  projects: {}
+projects: {}
 
 namespaces: {}

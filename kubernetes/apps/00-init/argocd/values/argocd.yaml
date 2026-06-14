@@ -1,33 +1,32 @@
-argocd:
+apps:
+  repoURL: https://github.com/jace-ys/homelab.git
+
+  watchedDirs:
+    - path: kubernetes/apps/*/*
+    - path: kubernetes/apps/00-init/argocd
+      exclude: true
+
+  annotations:
+    argocd.argoproj.io/manifest-generate-paths: .;/kubernetes/charts;/kubernetes/bases
+
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+
+projects:
+  core:
+    allowedNamespaces:
+      - cert-manager
+      - kgateway-system
   apps:
-    repoURL: https://github.com/jace-ys/homelab.git
-
-    watchedDirs:
-      - path: kubernetes/apps/*/*
-      - path: kubernetes/apps/00-init/argocd
-        exclude: true
-
-    annotations:
-      argocd.argoproj.io/manifest-generate-paths: .;/kubernetes/charts;/kubernetes/bases
-
-    syncPolicy:
-      automated:
-        enabled: true
-        prune: true
-        selfHeal: true
-      syncOptions:
-        - ServerSideApply=true
-
-  projects:
-    core:
-      allowedNamespaces:
-        - cert-manager
-        - kgateway-system
-    apps:
-      allowedNamespaces:
-        - "!kube-node-lease"
-        - "!kube-public"
-        - "!kube-system"
+    allowedNamespaces:
+      - "!kube-node-lease"
+      - "!kube-public"
+      - "!kube-system"
 
 namespaces:
   cert-manager: {}
