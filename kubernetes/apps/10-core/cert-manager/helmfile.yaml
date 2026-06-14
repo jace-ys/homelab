@@ -1,0 +1,16 @@
+---
+bases:
+  - ../../../bases/clusters.yaml
+
+values:
+  - hierarchy:
+      - environment
+---
+bases:
+  - ../../../bases/releases.yaml.gotmpl
+
+releases:
+  - name: cert-manager
+    chart: oci://quay.io/jetstack/charts/cert-manager
+    namespace: cert-manager
+    version: v1.20.2
