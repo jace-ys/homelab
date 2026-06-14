@@ -21,6 +21,7 @@ argocd:
   projects:
     core:
       allowedNamespaces:
+        - cert-manager
         - kgateway-system
     apps:
       allowedNamespaces:
@@ -29,4 +30,5 @@ argocd:
         - "!kube-system"
 
 namespaces:
+  cert-manager: {}
   kgateway-system: {}
