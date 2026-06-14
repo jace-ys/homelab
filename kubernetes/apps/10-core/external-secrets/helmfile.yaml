@@ -1,0 +1,16 @@
+---
+bases:
+  - ../../../bases/clusters.yaml
+
+values:
+  - hierarchy:
+      - environment
+---
+bases:
+  - ../../../bases/releases.yaml.gotmpl
+
+releases:
+  - name: external-secrets
+    chart: oci://ghcr.io/external-secrets/charts/external-secrets
+    namespace: external-secrets
+    version: 2.6.0

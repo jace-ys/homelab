@@ -11,6 +11,8 @@ global:
 enableCertificateOwnerRef: true
 
 config:
+  logging:
+    format: json
   enableGatewayAPI: true
   enableGatewayAPIListenerSet: true
   featureGates:
@@ -35,6 +37,9 @@ networkPolicy:
   enabled: true
 
 webhook:
+  config:
+    logging:
+      format: json
   resources:
     limits:
       memory: 64Mi
@@ -54,6 +59,9 @@ webhook:
     enabled: true
 
 cainjector:
+  config:
+    logging:
+      format: json
   resources:
     limits:
       memory: 64Mi
