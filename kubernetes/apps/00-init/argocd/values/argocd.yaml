@@ -21,6 +21,7 @@ projects:
   core:
     allowedNamespaces:
       - cert-manager
+      - external-secrets
       - kgateway-system
   apps:
     allowedNamespaces:
@@ -30,4 +31,5 @@ projects:
 
 namespaces:
   cert-manager: {}
+  external-secrets: {}
   kgateway-system: {}
