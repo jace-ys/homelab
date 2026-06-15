@@ -25,6 +25,10 @@ resource "oci_identity_policy" "k3s_servers" {
       oci_identity_dynamic_group.k3s_servers.name,
       data.oci_identity_compartment.cell.id,
     ),
+    format("Allow dynamic-group %s to read secret-bundles in compartment id %s",
+      oci_identity_dynamic_group.k3s_servers.name,
+      data.oci_identity_compartment.cell.id,
+    ),
   ]
 }
 

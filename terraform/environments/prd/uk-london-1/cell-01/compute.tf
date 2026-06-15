@@ -133,6 +133,7 @@ resource "oci_core_instance_configuration" "k3s_server" {
                 argocd_version       = local.argocd_version
                 argocd_username      = local.argocd_username
                 argocd_password      = bcrypt_hash.argocd_password.id
+                oci_vault_k3s_id     = oci_kms_vault.k3s.id
               })
             },
             {
