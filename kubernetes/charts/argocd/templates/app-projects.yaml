@@ -9,7 +9,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-10"
 spec:
   sourceRepos:
-    - {{ required "argocd.apps.repoURL is required" $.Values.apps.repoURL }}
+    - {{ required "apps.repoURL is required" $.Values.apps.repoURL }}
   destinations:
     {{- if $cfg.allowedNamespaces }}
     - namespace: default

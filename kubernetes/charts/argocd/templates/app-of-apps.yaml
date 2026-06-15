@@ -12,13 +12,13 @@ spec:
   goTemplateOptions: ["missingkey=error"]
   generators:
     - git:
-        repoURL: {{ required "argocd.apps.repoURL is required" .Values.apps.repoURL }}
+        repoURL: {{ required "apps.repoURL is required" .Values.apps.repoURL }}
         revision: HEAD
         {{- if .Values.apps.watchedDirs }}
         directories:
           {{- toYaml .Values.apps.watchedDirs | nindent 10 }}
         {{- else }}
-        {{- fail "argocd.apps.watchedDirs is required" }}
+        {{- fail "apps.watchedDirs is required" }}
         {{- end }}
         values:
           syncWave: '{{ "{{" }} index (splitList "-" (index .path.segments 2)) 0 {{ "}}" }}'
@@ -35,7 +35,7 @@ spec:
     spec:
       project: {{`"{{.values.project}}"`}}
       source:
-        repoURL: {{ required "argocd.apps.repoURL is required" .Values.apps.repoURL }}
+        repoURL: {{ required "apps.repoURL is required" .Values.apps.repoURL }}
         targetRevision: HEAD
         path: {{`"{{.path.path}}"`}}
         plugin: {}

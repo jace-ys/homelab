@@ -3,7 +3,8 @@ bases:
   - ../../../bases/clusters.yaml
 
 values:
-  - hierarchy:
+  - app: kgateway
+    hierarchy:
       - environment
 ---
 bases:
