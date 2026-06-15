@@ -64,10 +64,10 @@ spec:
     controller:
       resources:
         limits:
-          memory: 512Mi
+          memory: 1Gi
         requests:
-          cpu: 20m
-          memory: 512Mi
+          cpu: 200m
+          memory: 1Gi
 
     dex:
       enabled: false
@@ -131,10 +131,10 @@ spec:
               name: cmp-tmp
           resources:
             limits:
-              memory: 256Mi
+              memory: 512Mi
             requests:
-              cpu: 20m
-              memory: 256Mi
+              cpu: 100m
+              memory: 512Mi
       volumes:
       - name: argocd-cmp-cm
         configMap:
