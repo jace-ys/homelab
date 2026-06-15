@@ -1,12 +1,12 @@
 resource "oci_kms_vault" "k3s" {
   compartment_id = data.oci_identity_compartment.cell.id
-  display_name   = local.k3s_cluster_name
+  display_name   = replace(local.k3s_cluster_name, ".", "-")
   vault_type     = "DEFAULT"
 }
 
 resource "oci_kms_key" "k3s" {
   compartment_id      = data.oci_identity_compartment.cell.id
-  display_name        = local.k3s_cluster_name
+  display_name        = replace(local.k3s_cluster_name, ".", "-")
   management_endpoint = oci_kms_vault.k3s.management_endpoint
   protection_mode     = "SOFTWARE"
 
