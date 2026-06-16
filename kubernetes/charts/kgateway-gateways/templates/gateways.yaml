@@ -1,0 +1,42 @@
+{{- range $name, $gateway := .Values.gateways }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway-{{ $name }}
+  namespace: {{ $.Release.Namespace }}
+  {{- with $gateway.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  gatewayClassName: kgateway
+  infrastructure:
+    parametersRef:
+      group: gateway.kgateway.dev
+      kind: GatewayParameters
+      name: gateway-{{ $name }}
+  listeners:
+    - name: https
+      {{- with $gateway.hostname }}
+      hostname: {{ . | quote }}
+      {{- end }}
+      port: {{ $gateway.listeners.https.port }}
+      protocol: HTTPS
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: gateway-{{ $name }}-tls
+    - name: http
+      {{- with $gateway.hostname }}
+      hostname: {{ . | quote }}
+      {{- end }}
+      port: {{ $gateway.listeners.http.port }}
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+{{- end }}

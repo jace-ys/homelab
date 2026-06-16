@@ -1,17 +1,9 @@
 resources:
-  selfsigned-cluster-issuer: |
-    apiVersion: cert-manager.io/v1
-    kind: ClusterIssuer
-    metadata:
-      name: selfsigned
-    spec:
-      selfSigned: {}
-
-  external-secret-cloudflare: |
+  cloudflare-dns01-secret: |
     apiVersion: external-secrets.io/v1
     kind: ExternalSecret
     metadata:
-      name: cloudflare
+      name: cloudflare-dns01
       namespace: {{ .Release.Namespace }}
     spec:
       secretStoreRef:
@@ -23,7 +15,14 @@ resources:
         - secretKey: api-token
           remoteRef:
             key: cloudflare-api-token
-            version: "1"
+
+  selfsigned-cluster-issuer: |
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
+    metadata:
+      name: selfsigned
+    spec:
+      selfSigned: {}
 
   letsencrypt-cluster-issuer: |
     apiVersion: cert-manager.io/v1
@@ -40,7 +39,7 @@ resources:
           - dns01:
               cloudflare:
                 apiTokenSecretRef:
-                  name: cloudflare
+                  name: cloudflare-dns01
                   key: api-token
 
   letsencrypt-staging-cluster-issuer: |

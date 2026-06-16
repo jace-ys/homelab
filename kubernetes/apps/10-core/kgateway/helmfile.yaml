@@ -19,3 +19,7 @@ releases:
     chart: oci://cr.kgateway.dev/kgateway-dev/charts/kgateway
     namespace: kgateway-system
     version: v2.3.1
+
+  - name: kgateway-gateways
+    chart: ../../../charts/kgateway-gateways
+    namespace: kgateway-system
