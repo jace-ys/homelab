@@ -12,6 +12,7 @@ resources:
     kind: ExternalSecret
     metadata:
       name: cloudflare
+      namespace: {{ .Release.Namespace }}
     spec:
       secretStoreRef:
         kind: ClusterSecretStore
