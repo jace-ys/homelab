@@ -12,14 +12,12 @@ resources:
     kind: ExternalSecret
     metadata:
       name: cloudflare
-      namespace: cert-manager
     spec:
       secretStoreRef:
         kind: ClusterSecretStore
         name: oci-vault
-      deletionPolicy: Delete
       target:
-        name: cloudflare
+        deletionPolicy: Delete
       data:
         - secretKey: api-token
           remoteRef:
