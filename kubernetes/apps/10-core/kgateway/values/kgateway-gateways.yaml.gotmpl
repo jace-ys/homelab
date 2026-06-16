@@ -1,0 +1,24 @@
+gateways:
+  external:
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    hostname: "*.{{ .StateValues.cluster.domains.external }}"
+    listeners:
+      https:
+        nodePort: 31443
+        port: 443
+      http:
+        nodePort: 31080
+        port: 80
+
+  internal:
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    hostname: "*.{{ .StateValues.cluster.domains.internal }}"
+    listeners:
+      https:
+        nodePort: 32443
+        port: 443
+      http:
+        nodePort: 32080
+        port: 80
