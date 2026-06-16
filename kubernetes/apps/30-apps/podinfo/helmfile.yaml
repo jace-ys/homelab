@@ -3,8 +3,7 @@ bases:
   - ../../../bases/clusters.yaml
 
 values:
-  - app: podinfo
-    hierarchy:
+  - hierarchy:
       - cloud
       - environment
 ---

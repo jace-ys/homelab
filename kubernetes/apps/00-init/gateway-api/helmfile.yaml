@@ -3,8 +3,7 @@ bases:
   - ../../../bases/clusters.yaml
 
 values:
-  - app: gateway-api
-    hierarchy:
+  - hierarchy:
       - environment
 ---
 bases:

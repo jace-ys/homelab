@@ -1,13 +1,10 @@
 ---
 bases:
   - ../../../bases/clusters.yaml
-
-values:
-  - app: argocd
 ---
 bases:
   - ../../../bases/releases.yaml.gotmpl
 
 releases:
-  - name: argocd
-    chart: ../../../charts/argocd
+  - name: argocd-init
+    chart: ../../../charts/argocd-init
