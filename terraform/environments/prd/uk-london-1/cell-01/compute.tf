@@ -124,6 +124,7 @@ resource "oci_core_instance_configuration" "k3s_server" {
             {
               for f in fileset("${path.module}/templates/manifests", "*.yaml") :
               f => templatefile("${path.module}/templates/manifests/${f}", {
+                oci_region           = var.oci_region
                 k3s_cluster_name     = local.k3s_cluster_name
                 cloudflare_email     = var.cloudflare_email
                 cloudflare_api_token = var.cloudflare_api_token
