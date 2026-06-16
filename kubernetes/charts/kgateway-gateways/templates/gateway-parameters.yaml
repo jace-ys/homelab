@@ -6,7 +6,6 @@ metadata:
   name: gateway-{{ $name }}
   namespace: {{ $.Release.Namespace }}
 spec:
-  selfManaged: false
   kube:
     service:
       type: NodePort

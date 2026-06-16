@@ -1,6 +1,4 @@
 ---
-{{- $_ := index .StateValues "app" | required "app name is required" }}
----
 {{- $cluster := index .StateValues.clusters .Environment.Name | required "cluster not found" }}
 environments:
   {{ .Environment.Name }}:
@@ -32,6 +30,9 @@ environments:
 helmDefaults:
   args:
     - --include-crds
+
+values:
+  - app: {{ exec "basename" (list (env "PWD")) }}
 
 templates:
   release:

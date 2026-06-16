@@ -3,8 +3,7 @@ bases:
   - ../../../bases/clusters.yaml
 
 values:
-  - app: external-secrets
-    hierarchy:
+  - hierarchy:
       - environment
 ---
 bases:
