@@ -14,4 +14,12 @@ spec:
           nodePort: {{ $gateway.listeners.https.nodePort }}
         - port: {{ $gateway.listeners.http.port }}
           nodePort: {{ $gateway.listeners.http.nodePort }}
+    {{- with $gateway.deployment }}
+    deployment:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with $gateway.envoy }}
+    envoyContainer:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
 {{- end }}

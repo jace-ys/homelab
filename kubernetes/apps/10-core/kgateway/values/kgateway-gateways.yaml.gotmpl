@@ -10,6 +10,13 @@ gateways:
       http:
         nodePort: 31080
         port: 80
+    envoy:
+      resources:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi
 
   internal:
     annotations:
@@ -22,3 +29,10 @@ gateways:
       http:
         nodePort: 32080
         port: 80
+    envoy:
+      resources:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi

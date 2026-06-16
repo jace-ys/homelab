@@ -32,4 +32,6 @@ projects:
 namespaces:
   cert-manager: {}
   external-secrets: {}
-  kgateway-system: {}
+  kgateway-system:
+    labels:
+      homelab.jaceystan.com/acme-dns01-solver: cloudflare
