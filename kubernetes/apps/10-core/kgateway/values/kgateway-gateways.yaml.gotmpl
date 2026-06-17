@@ -1,7 +1,7 @@
 gateways:
   external:
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-staging
+      cert-manager.io/cluster-issuer: letsencrypt
     hostname: "*.{{ .StateValues.cluster.domains.external }}"
     listeners:
       https:
@@ -20,7 +20,7 @@ gateways:
 
   internal:
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-staging
+      cert-manager.io/cluster-issuer: letsencrypt
     hostname: "*.{{ .StateValues.cluster.domains.internal }}"
     listeners:
       https:

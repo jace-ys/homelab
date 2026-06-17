@@ -29,7 +29,9 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: gateway-{{ $name }}-tls
+          - group: ""
+            kind: Secret
+            name: gateway-{{ $name }}-tls
     - name: http
       {{- with $gateway.hostname }}
       hostname: {{ . | quote }}

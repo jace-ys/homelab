@@ -1,24 +1,24 @@
 resources:
-  cloudflare-dns01-cluster-external-secret: |
+  cloudflare-dns01-secret: |
     apiVersion: external-secrets.io/v1
-    kind: ClusterExternalSecret
+    kind: ExternalSecret
     metadata:
       name: cloudflare-dns01
+      namespace: {{ .Release.Namespace }}
     spec:
-      externalSecretName: cloudflare-dns01
-      namespaceSelector:
-        matchLabels:
-          homelab.jaceystan.com/acme-dns01-solver: cloudflare
-      externalSecretSpec:
-        secretStoreRef:
-          kind: ClusterSecretStore
-          name: oci-vault
-        target:
-          deletionPolicy: Delete
-        data:
-          - secretKey: api-token
-            remoteRef:
-              key: cloudflare-api-token
+      secretStoreRef:
+        kind: ClusterSecretStore
+        name: oci-vault
+      target:
+        deletionPolicy: Delete
+      data:
+        - secretKey: api-token
+          remoteRef:
+            key: cloudflare-api-token
+            conversionStrategy: Default
+            decodingStrategy: None
+            metadataPolicy: None
+            nullBytePolicy: Ignore
 
   selfsigned-cluster-issuer: |
     apiVersion: cert-manager.io/v1
