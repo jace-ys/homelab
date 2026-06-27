@@ -62,6 +62,18 @@ resource "oci_identity_policy" "k3s_agents" {
       oci_identity_dynamic_group.k3s_agents.name,
       data.oci_identity_compartment.cell.id,
     ),
+    format("Allow dynamic-group %s to read secret-bundles in compartment id %s",
+      oci_identity_dynamic_group.k3s_agents.name,
+      data.oci_identity_compartment.cell.id,
+    ),
+    format("Allow dynamic-group %s to use vaults in compartment id %s",
+      oci_identity_dynamic_group.k3s_agents.name,
+      data.oci_identity_compartment.cell.id,
+    ),
+    format("Allow dynamic-group %s to use keys in compartment id %s",
+      oci_identity_dynamic_group.k3s_agents.name,
+      data.oci_identity_compartment.cell.id,
+    ),
   ]
 }
 
