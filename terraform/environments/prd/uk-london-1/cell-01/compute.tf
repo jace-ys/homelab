@@ -171,16 +171,30 @@ resource "oci_core_instance_pool" "k3s_server" {
   }
 
   load_balancers {
-    load_balancer_id = oci_load_balancer_load_balancer.internal.id
-    backend_set_name = oci_load_balancer_backend_set.traefik_http.name
-    port             = 30080
+    load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+    backend_set_name = oci_network_load_balancer_backend_set.gateway_external_http.name
+    port             = 31080
+    vnic_selection   = "PrimaryVnic"
+  }
+
+  load_balancers {
+    load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+    backend_set_name = oci_network_load_balancer_backend_set.gateway_external_https.name
+    port             = 31443
     vnic_selection   = "PrimaryVnic"
   }
 
   load_balancers {
     load_balancer_id = oci_load_balancer_load_balancer.internal.id
-    backend_set_name = oci_load_balancer_backend_set.traefik_https.name
-    port             = 30443
+    backend_set_name = oci_load_balancer_backend_set.gateway_internal_http.name
+    port             = 32080
+    vnic_selection   = "PrimaryVnic"
+  }
+
+  load_balancers {
+    load_balancer_id = oci_load_balancer_load_balancer.internal.id
+    backend_set_name = oci_load_balancer_backend_set.gateway_internal_https.name
+    port             = 32443
     vnic_selection   = "PrimaryVnic"
   }
 
@@ -260,16 +274,30 @@ resource "oci_core_instance_pool" "k3s_agent" {
   size                      = local.k3s_agent_count
 
   load_balancers {
-    load_balancer_id = oci_load_balancer_load_balancer.internal.id
-    backend_set_name = oci_load_balancer_backend_set.traefik_http.name
-    port             = 30080
+    load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+    backend_set_name = oci_network_load_balancer_backend_set.gateway_external_http.name
+    port             = 31080
+    vnic_selection   = "PrimaryVnic"
+  }
+
+  load_balancers {
+    load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+    backend_set_name = oci_network_load_balancer_backend_set.gateway_external_https.name
+    port             = 31443
     vnic_selection   = "PrimaryVnic"
   }
 
   load_balancers {
     load_balancer_id = oci_load_balancer_load_balancer.internal.id
-    backend_set_name = oci_load_balancer_backend_set.traefik_https.name
-    port             = 30443
+    backend_set_name = oci_load_balancer_backend_set.gateway_internal_http.name
+    port             = 32080
+    vnic_selection   = "PrimaryVnic"
+  }
+
+  load_balancers {
+    load_balancer_id = oci_load_balancer_load_balancer.internal.id
+    backend_set_name = oci_load_balancer_backend_set.gateway_internal_https.name
+    port             = 32443
     vnic_selection   = "PrimaryVnic"
   }
 

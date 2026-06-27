@@ -56,46 +56,88 @@ resource "oci_load_balancer_load_balancer" "internal" {
   }
 }
 
-# Traefik HTTP
+# Gateway External HTTP
 
-resource "oci_load_balancer_backend_set" "traefik_http" {
-  load_balancer_id = oci_load_balancer_load_balancer.internal.id
-  name             = "traefik-http"
-  policy           = "ROUND_ROBIN"
-
-  health_checker {
-    protocol = "TCP"
-    port     = 30080
-  }
-}
-
-resource "oci_load_balancer_listener" "traefik_http" {
-  load_balancer_id         = oci_load_balancer_load_balancer.internal.id
-  name                     = "traefik-http"
-  default_backend_set_name = oci_load_balancer_backend_set.traefik_http.name
+resource "oci_network_load_balancer_listener" "gateway_external_http" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-http"
+  default_backend_set_name = oci_network_load_balancer_backend_set.gateway_external_http.name
   port                     = 80
   protocol                 = "TCP"
 }
 
-# Traefik HTTPS
+resource "oci_network_load_balancer_backend_set" "gateway_external_http" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-http"
+  policy                   = "ROUND_ROBIN"
 
-resource "oci_load_balancer_backend_set" "traefik_https" {
+  health_checker {
+    protocol = "TCP"
+    port     = 31080
+  }
+}
+
+# Gateway External HTTPS
+
+resource "oci_network_load_balancer_listener" "gateway_external_https" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-https"
+  default_backend_set_name = oci_network_load_balancer_backend_set.gateway_external_https.name
+  port                     = 443
+  protocol                 = "TCP"
+}
+
+resource "oci_network_load_balancer_backend_set" "gateway_external_https" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-https"
+  policy                   = "ROUND_ROBIN"
+
+  health_checker {
+    protocol = "TCP"
+    port     = 31443
+  }
+}
+
+# Gateway Internal HTTP
+
+resource "oci_load_balancer_listener" "gateway_internal_http" {
+  load_balancer_id         = oci_load_balancer_load_balancer.internal.id
+  name                     = "gateway-internal-http"
+  default_backend_set_name = oci_load_balancer_backend_set.gateway_internal_http.name
+  port                     = 80
+  protocol                 = "TCP"
+}
+
+resource "oci_load_balancer_backend_set" "gateway_internal_http" {
   load_balancer_id = oci_load_balancer_load_balancer.internal.id
-  name             = "traefik-https"
+  name             = "gateway-internal-http"
   policy           = "ROUND_ROBIN"
 
   health_checker {
     protocol = "TCP"
-    port     = 30443
+    port     = 32080
   }
 }
 
-resource "oci_load_balancer_listener" "traefik_https" {
+# Gateway Internal HTTPS
+
+resource "oci_load_balancer_listener" "gateway_internal_https" {
   load_balancer_id         = oci_load_balancer_load_balancer.internal.id
-  name                     = "traefik-https"
-  default_backend_set_name = oci_load_balancer_backend_set.traefik_https.name
+  name                     = "gateway-internal-https"
+  default_backend_set_name = oci_load_balancer_backend_set.gateway_internal_https.name
   port                     = 443
   protocol                 = "TCP"
+}
+
+resource "oci_load_balancer_backend_set" "gateway_internal_https" {
+  load_balancer_id = oci_load_balancer_load_balancer.internal.id
+  name             = "gateway-internal-https"
+  policy           = "ROUND_ROBIN"
+
+  health_checker {
+    protocol = "TCP"
+    port     = 32443
+  }
 }
 
 # K3s API

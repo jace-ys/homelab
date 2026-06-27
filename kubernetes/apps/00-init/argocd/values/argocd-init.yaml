@@ -1,3 +1,20 @@
+namespaces:
+  cert-manager: {}
+  external-secrets: {}
+  kgateway-system: {}
+
+projects:
+  core:
+    allowedNamespaces:
+      - cert-manager
+      - external-secrets
+      - kgateway-system
+  apps:
+    allowedNamespaces:
+      - "!kube-node-lease"
+      - "!kube-public"
+      - "!kube-system"
+
 apps:
   repoURL: https://github.com/jace-ys/homelab.git
 
@@ -16,20 +33,3 @@ apps:
       selfHeal: true
     syncOptions:
       - ServerSideApply=true
-
-projects:
-  core:
-    allowedNamespaces:
-      - cert-manager
-      - external-secrets
-      - kgateway-system
-  apps:
-    allowedNamespaces:
-      - "!kube-node-lease"
-      - "!kube-public"
-      - "!kube-system"
-
-namespaces:
-  cert-manager: {}
-  external-secrets: {}
-  kgateway-system: {}
