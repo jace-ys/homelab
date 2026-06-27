@@ -5,8 +5,6 @@ global:
   leaderElection:
     namespace: {{ .Release.Namespace }}
   priorityClassName: system-cluster-critical
-  nodeSelector:
-    node-role.kubernetes.io/control-plane: "true"
 
 enableCertificateOwnerRef: true
 
@@ -20,18 +18,10 @@ config:
 
 resources:
   limits:
-    memory: 64Mi
+    memory: 128Mi
   requests:
-    cpu: 10m
-    memory: 64Mi
-
-tolerations:
-  - key: node-role.kubernetes.io/master
-    operator: Exists
-    effect: NoSchedule
-  - key: node-role.kubernetes.io/control-plane
-    operator: Exists
-    effect: NoSchedule
+    cpu: 20m
+    memory: 128Mi
 
 networkPolicy:
   enabled: true
@@ -42,18 +32,10 @@ webhook:
       format: json
   resources:
     limits:
-      memory: 64Mi
+      memory: 128Mi
     requests:
-      cpu: 10m
-      memory: 64Mi
-
-  tolerations:
-    - key: node-role.kubernetes.io/master
-      operator: Exists
-      effect: NoSchedule
-    - key: node-role.kubernetes.io/control-plane
-      operator: Exists
-      effect: NoSchedule
+      cpu: 20m
+      memory: 128Mi
 
   networkPolicy:
     enabled: true
@@ -64,18 +46,10 @@ cainjector:
       format: json
   resources:
     limits:
-      memory: 64Mi
+      memory: 128Mi
     requests:
-      cpu: 10m
-      memory: 64Mi
-
-  tolerations:
-    - key: node-role.kubernetes.io/master
-      operator: Exists
-      effect: NoSchedule
-    - key: node-role.kubernetes.io/control-plane
-      operator: Exists
-      effect: NoSchedule
+      cpu: 20m
+      memory: 128Mi
 
   networkPolicy:
     enabled: true
@@ -87,14 +61,6 @@ startupapicheck:
     requests:
       cpu: 5m
       memory: 32Mi
-
-  tolerations:
-    - key: node-role.kubernetes.io/master
-      operator: Exists
-      effect: NoSchedule
-    - key: node-role.kubernetes.io/control-plane
-      operator: Exists
-      effect: NoSchedule
 
 prometheus:
   enabled: false
