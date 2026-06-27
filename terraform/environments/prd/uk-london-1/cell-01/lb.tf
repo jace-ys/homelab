@@ -24,6 +24,48 @@ resource "oci_network_load_balancer_network_load_balancer" "external" {
   }
 }
 
+# Gateway External HTTP
+
+resource "oci_network_load_balancer_listener" "gateway_external_http" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-http"
+  default_backend_set_name = oci_network_load_balancer_backend_set.gateway_external_http.name
+  port                     = 80
+  protocol                 = "TCP"
+}
+
+resource "oci_network_load_balancer_backend_set" "gateway_external_http" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-http"
+  policy                   = "FIVE_TUPLE"
+
+  health_checker {
+    protocol = "TCP"
+    port     = 31080
+  }
+}
+
+# Gateway External HTTPS
+
+resource "oci_network_load_balancer_listener" "gateway_external_https" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-https"
+  default_backend_set_name = oci_network_load_balancer_backend_set.gateway_external_https.name
+  port                     = 443
+  protocol                 = "TCP"
+}
+
+resource "oci_network_load_balancer_backend_set" "gateway_external_https" {
+  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
+  name                     = "gateway-external-https"
+  policy                   = "FIVE_TUPLE"
+
+  health_checker {
+    protocol = "TCP"
+    port     = 31443
+  }
+}
+
 /*
 LB Internal
 */
@@ -53,48 +95,6 @@ resource "oci_load_balancer_load_balancer" "internal" {
   shape_details {
     minimum_bandwidth_in_mbps = 10
     maximum_bandwidth_in_mbps = 10
-  }
-}
-
-# Gateway External HTTP
-
-resource "oci_network_load_balancer_listener" "gateway_external_http" {
-  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
-  name                     = "gateway-external-http"
-  default_backend_set_name = oci_network_load_balancer_backend_set.gateway_external_http.name
-  port                     = 80
-  protocol                 = "TCP"
-}
-
-resource "oci_network_load_balancer_backend_set" "gateway_external_http" {
-  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
-  name                     = "gateway-external-http"
-  policy                   = "ROUND_ROBIN"
-
-  health_checker {
-    protocol = "TCP"
-    port     = 31080
-  }
-}
-
-# Gateway External HTTPS
-
-resource "oci_network_load_balancer_listener" "gateway_external_https" {
-  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
-  name                     = "gateway-external-https"
-  default_backend_set_name = oci_network_load_balancer_backend_set.gateway_external_https.name
-  port                     = 443
-  protocol                 = "TCP"
-}
-
-resource "oci_network_load_balancer_backend_set" "gateway_external_https" {
-  network_load_balancer_id = oci_network_load_balancer_network_load_balancer.external.id
-  name                     = "gateway-external-https"
-  policy                   = "ROUND_ROBIN"
-
-  health_checker {
-    protocol = "TCP"
-    port     = 31443
   }
 }
 
