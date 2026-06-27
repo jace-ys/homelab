@@ -9,17 +9,4 @@ resources:
     memory: 32Mi
 
 ingress:
-  enabled: true
-  className: traefik
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
-  hosts:
-    - host: "podinfo.{{ .StateValues.cluster.domains.internal }}"
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: podinfo-tls
-      hosts:
-        - "podinfo.{{ .StateValues.cluster.domains.internal }}"
+  enabled: false

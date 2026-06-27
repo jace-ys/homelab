@@ -35,6 +35,73 @@ resource "oci_core_network_security_group" "mysql_k3s" {
 }
 
 /*
+LB External
+*/
+
+resource "oci_core_network_security_group_security_rule" "lb_external_ingress" {
+  for_each = {
+    http = {
+      protocol    = "6"
+      source_type = "CIDR_BLOCK"
+      source      = "0.0.0.0/0"
+      port_min    = 80
+      port_max    = 80
+    }
+    https = {
+      protocol    = "6"
+      source_type = "CIDR_BLOCK"
+      source      = "0.0.0.0/0"
+      port_min    = 443
+      port_max    = 443
+    }
+  }
+
+  network_security_group_id = oci_core_network_security_group.lb_external.id
+  direction                 = "INGRESS"
+  protocol                  = each.value.protocol
+  source_type               = each.value.source_type
+  source                    = each.value.source
+
+  dynamic "tcp_options" {
+    for_each = each.value.protocol == "6" ? [1] : []
+    content {
+      destination_port_range {
+        min = each.value.port_min
+        max = each.value.port_max
+      }
+    }
+  }
+}
+
+resource "oci_core_network_security_group_security_rule" "lb_external_egress" {
+  for_each = {
+    k3s_node_ports = {
+      protocol         = "6"
+      destination_type = "NETWORK_SECURITY_GROUP"
+      destination      = oci_core_network_security_group.k3s_nodes.id
+      port_min         = 30000
+      port_max         = 32767
+    }
+  }
+
+  network_security_group_id = oci_core_network_security_group.lb_external.id
+  direction                 = "EGRESS"
+  protocol                  = each.value.protocol
+  destination_type          = each.value.destination_type
+  destination               = each.value.destination
+
+  dynamic "tcp_options" {
+    for_each = each.value.protocol == "6" ? [1] : []
+    content {
+      destination_port_range {
+        min = each.value.port_min
+        max = each.value.port_max
+      }
+    }
+  }
+}
+
+/*
 LB Internal
 */
 
@@ -121,6 +188,13 @@ K3s Nodes
 
 resource "oci_core_network_security_group_security_rule" "k3s_nodes_ingress" {
   for_each = {
+    lb_external = {
+      protocol    = "6"
+      source_type = "NETWORK_SECURITY_GROUP"
+      source      = oci_core_network_security_group.lb_external.id
+      port_min    = 30000
+      port_max    = 32767
+    }
     lb_internal = {
       protocol    = "6"
       source_type = "NETWORK_SECURITY_GROUP"
