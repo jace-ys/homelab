@@ -126,11 +126,8 @@ resource "oci_core_instance_configuration" "k3s_server" {
               f => templatefile("${path.module}/templates/manifests/${f}", {
                 oci_region           = var.oci_region
                 k3s_cluster_name     = local.k3s_cluster_name
-                cloudflare_email     = var.cloudflare_email
-                cloudflare_api_token = var.cloudflare_api_token
                 base_domain_external = var.base_domain_external
                 base_domain_internal = var.base_domain_internal
-                lb_internal_ip       = oci_core_public_ip.lb_internal.ip_address
                 argocd_version       = local.argocd_version
                 argocd_username      = local.argocd_username
                 argocd_password      = bcrypt_hash.argocd_password.id

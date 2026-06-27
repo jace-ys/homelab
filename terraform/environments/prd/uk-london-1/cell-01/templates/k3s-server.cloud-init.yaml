@@ -42,6 +42,7 @@ runcmd:
       --node-label k3s.io/node-role=server \
       --node-taint node-role.kubernetes.io/control-plane:NoSchedule \
       --disable servicelb \
+      --disable traefik \
       --disable-cloud-controller \
       --kubelet-arg cloud-provider=external \
       --kubelet-arg provider-id=$INSTANCE_OCID

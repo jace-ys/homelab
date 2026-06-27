@@ -157,32 +157,6 @@ spec:
     notifications:
       enabled: false
 ---
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: argocd
-  namespace: argocd
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - kind: Rule
-      match: Host(`argocd.${base_domain_internal}`)
-      priority: 10
-      services:
-        - kind: Service
-          name: argocd-server
-          port: http
-    - kind: Rule
-      match: Host(`argocd.${base_domain_internal}`) && Header(`Content-Type`, `application/grpc`)
-      priority: 11
-      services:
-        - name: argocd-server
-          port: http
-          scheme: h2c
-  tls:
-    certResolver: letsencrypt
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
