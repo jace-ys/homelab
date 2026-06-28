@@ -1,8 +1,9 @@
 config:
+  inClusterContextName: {{ .StateValues.cluster.name }}
   unsafeUseServiceAccountToken: true
 
 clusterRoleBinding:
-  clusterRoleName: cluster-viewer
+  clusterRoleName: view
 
 resources:
   limits:
