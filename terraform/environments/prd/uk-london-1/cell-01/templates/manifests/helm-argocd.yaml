@@ -95,24 +95,6 @@ spec:
       service:
         servicePortHttpsAppProtocol: kubernetes.io/h2c
 
-      httproute:
-        enabled: true
-        parentRefs:
-          - name: gateway-internal
-            namespace: kgateway-system
-            sectionName: https
-        hostnames:
-          - argocd.${base_domain_internal}
-
-      grpcroute:
-        enabled: true
-        parentRefs:
-          - name: gateway-internal
-            namespace: kgateway-system
-            sectionName: https
-        hostnames:
-          - grpc.argocd.${base_domain_internal}
-
     repoServer:
       resources:
         limits:
