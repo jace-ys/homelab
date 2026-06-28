@@ -139,6 +139,10 @@ spec:
               value: ${base_domain_internal}
             - name: HELM_CACHE_HOME
               value: /tmp/helm
+            - name: HELM_CONFIG_HOME
+              value: /tmp/helm
+            - name: HELM_DATA_HOME
+              value: /tmp/helm
             - name: HELMFILE_CACHE_HOME
               value: /tmp/helmfile
             - name: HELMFILE_TEMPDIR

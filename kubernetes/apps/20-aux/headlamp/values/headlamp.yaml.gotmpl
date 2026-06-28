@@ -1,0 +1,21 @@
+config:
+  unsafeUseServiceAccountToken: true
+
+clusterRoleBinding:
+  clusterRoleName: cluster-viewer
+
+resources:
+  limits:
+    memory: 128Mi
+  requests:
+    cpu: 20m
+    memory: 128Mi
+
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: gateway-internal
+      namespace: kgateway-system
+      sectionName: https
+  hostnames:
+    - "headlamp.{{ .StateValues.cluster.domains.internal }}"
