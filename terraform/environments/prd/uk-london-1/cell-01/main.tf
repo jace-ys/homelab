@@ -26,10 +26,9 @@ locals {
   k3s_node_ocpus  = 1
   k3s_node_memory = 6
 
-  argocd_version  = "10.0.0"
-  argocd_username = "jacetan"
-}
+  argocd_version = "10.0.0"
 
-resource "bcrypt_hash" "argocd_password" {
-  cleartext = local.secrets.argocd.password
+  argocd_google_admin_email         = "jaceys.tan@gmail.com"
+  argocd_google_oauth_client_id     = "652266662049-5n157tcjjpigbp4c1q6asmqb34vf7ci2.apps.googleusercontent.com"
+  argocd_google_oauth_client_secret = local.secrets.argocd.google_oauth.client_secret
 }

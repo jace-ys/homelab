@@ -2,10 +2,6 @@ terraform {
   required_version = "~> 1.12"
 
   required_providers {
-    bcrypt = {
-      source  = "viktorradnai/bcrypt"
-      version = "~> 0.1"
-    }
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "~> 5.19"
