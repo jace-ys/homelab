@@ -13,7 +13,7 @@ releases:
   - name: cert-manager
     chart: oci://quay.io/jetstack/charts/cert-manager
     namespace: cert-manager
-    version: v1.20.2
+    version: v1.20.3
 
   - name: cert-manager-issuers
     chart: ../../../charts/raw

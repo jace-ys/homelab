@@ -109,6 +109,7 @@ jobs:
             --target-branch refs/pull/${{ github.event.number }}/merge \
             --render-method repo-server-api \
             --traverse-app-of-apps \
+            --ignore-resources='*:CustomResourceDefinition:*' \
             --file-regex "terraform/environments/.*/helm-argocd.yaml$"
 
       - name: Upload diff
