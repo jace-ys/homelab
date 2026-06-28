@@ -8,5 +8,11 @@ resources:
     cpu: 5m
     memory: 32Mi
 
-ingress:
-  enabled: false
+httpRoute:
+  enabled: true
+  parentRefs:
+    - name: gateway-external
+      namespace: kgateway-system
+      sectionName: https
+  hostnames:
+    - podinfo.{{ .StateValues.cluster.domains.external }}
