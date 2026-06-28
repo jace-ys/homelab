@@ -8,3 +8,7 @@ bases:
 releases:
   - name: argocd-init
     chart: ../../../charts/argocd-init
+
+  - name: argocd-routes
+    chart: ../../../charts/raw
+    namespace: argocd

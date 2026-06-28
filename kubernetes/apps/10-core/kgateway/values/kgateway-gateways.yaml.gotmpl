@@ -43,11 +43,10 @@ routes:
     kind: HTTPRoute
     metadata:
       name: argocd-http-redirect
-      namespace: argocd
+      namespace: {{ .Release.Namespace }}
     spec:
       parentRefs:
         - name: gateway-internal
-          namespace: {{ .Release.Namespace }}
           sectionName: http
       hostnames:
         - "argocd.{{ .StateValues.cluster.domains.internal }}"
@@ -63,17 +62,17 @@ routes:
     kind: HTTPRoute
     metadata:
       name: argocd-https
-      namespace: argocd
+      namespace: {{ .Release.Namespace }}
     spec:
       parentRefs:
         - name: gateway-internal
-          namespace: {{ .Release.Namespace }}
           sectionName: https
       hostnames:
         - "argocd.{{ .StateValues.cluster.domains.internal }}"
       rules:
         - backendRefs:
             - name: argocd-server
+              namespace: argocd
               port: 80
 
   argocd-grpc: |
@@ -81,15 +80,15 @@ routes:
     kind: GRPCRoute
     metadata:
       name: argocd-grpc
-      namespace: argocd
+      namespace: {{ .Release.Namespace }}
     spec:
       parentRefs:
         - name: gateway-internal
-          namespace: {{ .Release.Namespace }}
           sectionName: https
       hostnames:
         - "grpc.argocd.{{ .StateValues.cluster.domains.internal }}"
       rules:
         - backendRefs:
             - name: argocd-server
+              namespace: argocd
               port: 80
