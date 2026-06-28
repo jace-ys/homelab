@@ -25,6 +25,7 @@ apps:
 
   annotations:
     argocd.argoproj.io/manifest-generate-paths: .;/kubernetes/charts;/kubernetes/bases
+    argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
 
   syncPolicy:
     automated:
