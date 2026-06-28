@@ -13,4 +13,4 @@ releases:
   - name: external-secrets
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
     namespace: external-secrets
-    version: 2.6.0
+    version: 2.7.0
