@@ -43,7 +43,7 @@ routes:
     kind: HTTPRoute
     metadata:
       name: argocd-http-redirect
-      namespace: {{ .Release.Namespace }}
+      namespace: argocd
     spec:
       parentRefs:
         - name: gateway-internal
@@ -63,7 +63,7 @@ routes:
     kind: HTTPRoute
     metadata:
       name: argocd-https
-      namespace: {{ .Release.Namespace }}
+      namespace: argocd
     spec:
       parentRefs:
         - name: gateway-internal
@@ -74,7 +74,6 @@ routes:
       rules:
         - backendRefs:
             - name: argocd-server
-              namespace: argocd
               port: 80
 
   argocd-grpc: |
@@ -82,7 +81,7 @@ routes:
     kind: GRPCRoute
     metadata:
       name: argocd-grpc
-      namespace: {{ .Release.Namespace }}
+      namespace: argocd
     spec:
       parentRefs:
         - name: gateway-internal
@@ -93,5 +92,4 @@ routes:
       rules:
         - backendRefs:
             - name: argocd-server
-              namespace: argocd
               port: 80
