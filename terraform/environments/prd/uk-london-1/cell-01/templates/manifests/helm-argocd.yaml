@@ -23,8 +23,6 @@ spec:
       domain: argocd.${base_domain_internal}
       logging:
         format: json
-      networkPolicy:
-        create: true
       priorityClassName: system-cluster-critical
       nodeSelector:
         node-role.kubernetes.io/control-plane: "true"
@@ -81,6 +79,13 @@ spec:
 
     dex:
       enabled: true
+      initImage:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 20m
+            memory: 128Mi
       resources:
         limits:
           memory: 64Mi
