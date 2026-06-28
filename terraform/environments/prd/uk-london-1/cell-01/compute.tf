@@ -124,14 +124,15 @@ resource "oci_core_instance_configuration" "k3s_server" {
             {
               for f in fileset("${path.module}/templates/manifests", "*.yaml") :
               f => templatefile("${path.module}/templates/manifests/${f}", {
-                oci_region           = var.oci_region
-                k3s_cluster_name     = local.k3s_cluster_name
-                base_domain_external = var.base_domain_external
-                base_domain_internal = var.base_domain_internal
-                argocd_version       = local.argocd_version
-                argocd_username      = local.argocd_username
-                argocd_password      = bcrypt_hash.argocd_password.id
-                oci_vault_k3s_id     = oci_kms_vault.k3s.id
+                oci_region                        = var.oci_region
+                k3s_cluster_name                  = local.k3s_cluster_name
+                base_domain_external              = var.base_domain_external
+                base_domain_internal              = var.base_domain_internal
+                argocd_version                    = local.argocd_version
+                argocd_google_admin_email         = local.argocd_google_admin_email
+                argocd_google_oauth_client_id     = local.argocd_google_oauth_client_id
+                argocd_google_oauth_client_secret = local.argocd_google_oauth_client_secret
+                oci_vault_k3s_id                  = oci_kms_vault.k3s.id
               })
             },
             {

@@ -2,13 +2,9 @@ terraform {
   required_version = "~> 1.12"
 
   required_providers {
-    bcrypt = {
-      source  = "viktorradnai/bcrypt"
-      version = "~> 0.1"
-    }
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5.19"
+      version = "~> 5.21"
     }
     kustomization = {
       source  = "kbst/kustomization"
@@ -16,7 +12,7 @@ terraform {
     }
     oci = {
       source  = "oracle/oci"
-      version = "~> 8.17"
+      version = "~> 8.20"
     }
     random = {
       source  = "hashicorp/random"

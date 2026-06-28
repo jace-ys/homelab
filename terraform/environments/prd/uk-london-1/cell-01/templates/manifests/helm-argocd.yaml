@@ -39,13 +39,23 @@ spec:
     configs:
       cm:
         admin.enabled: false
-        accounts.${argocd_username}: apiKey, login
+        url: https://argocd.${base_domain_internal}
+        dex.config: |
+          connectors:
+            - type: oidc
+              id: google
+              name: Google
+              config:
+                issuer: https://accounts.google.com
+                clientID: ${argocd_google_oauth_client_id}
+                clientSecret: $dex.google.clientSecret
       rbac:
+        scopes: '[email]'
         policy.csv: |
-          g, ${argocd_username}, role:admin
+          g, ${argocd_google_admin_email}, role:admin
       secret:
         extra:
-          accounts.${argocd_username}.password: ${argocd_password}
+          dex.google.clientSecret: ${argocd_google_oauth_client_secret}
       params:
         server.insecure: "true"
         reposerver.plugin.use.manifest.generate.paths: "true"
@@ -70,7 +80,13 @@ spec:
           memory: 1Gi
 
     dex:
-      enabled: false
+      enabled: true
+      resources:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi
 
     redis:
       resources:
