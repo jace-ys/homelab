@@ -1,6 +1,7 @@
 namespaces:
   cert-manager: {}
   external-secrets: {}
+  headlamp: {}
   kgateway-system: {}
 
 projects:
@@ -9,6 +10,9 @@ projects:
       - cert-manager
       - external-secrets
       - kgateway-system
+  aux:
+    allowedNamespaces:
+      - headlamp
   apps:
     allowedNamespaces:
       - "!kube-node-lease"

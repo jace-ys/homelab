@@ -1,0 +1,20 @@
+---
+bases:
+  - ../../../bases/clusters.yaml
+
+values:
+  - hierarchy:
+      - environment
+---
+bases:
+  - ../../../bases/releases.yaml.gotmpl
+
+repositories:
+  - name: headlamp
+    url: https://kubernetes-sigs.github.io/headlamp
+
+releases:
+  - name: headlamp
+    chart: headlamp/headlamp
+    namespace: headlamp
+    version: 0.43.0
