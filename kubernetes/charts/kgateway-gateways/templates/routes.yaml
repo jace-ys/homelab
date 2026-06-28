@@ -1,0 +1,4 @@
+{{- range $name, $route := .Values.routes }}
+---
+{{ $route }}
+{{- end }}
