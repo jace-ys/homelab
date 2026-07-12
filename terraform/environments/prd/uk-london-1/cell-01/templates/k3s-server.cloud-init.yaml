@@ -2,6 +2,7 @@
 package_update: true
 packages:
   - iptables-persistent
+  - open-iscsi
 
 write_files:
 %{ for filename, content in manifests ~}
@@ -15,6 +16,10 @@ runcmd:
   - echo "==> Installing OCI CLI..."
   - curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
   - ln -s /root/bin/oci /usr/local/bin/oci
+
+  - echo "==> Enabling iscsi for Longhorn..."
+  - systemctl enable iscsid
+  - systemctl start iscsid
 
   - echo "==> Allowing inbound traffic to required K3s ports..."
   - |

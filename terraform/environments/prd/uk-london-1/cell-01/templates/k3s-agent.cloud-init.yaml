@@ -2,8 +2,13 @@
 package_update: true
 packages:
   - iptables-persistent
+  - open-iscsi
 
 runcmd:
+  - echo "==> Enabling iscsi for Longhorn..."
+  - systemctl enable iscsid
+  - systemctl start iscsid
+
   - echo "==> Allowing inbound traffic to required K3s ports..."
   - |
     for rule in \

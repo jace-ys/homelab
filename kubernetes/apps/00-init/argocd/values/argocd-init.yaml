@@ -3,6 +3,7 @@ namespaces:
   external-secrets: {}
   headlamp: {}
   kgateway-system: {}
+  longhorn-system: {}
 
 projects:
   core:
@@ -10,6 +11,7 @@ projects:
       - cert-manager
       - external-secrets
       - kgateway-system
+      - longhorn-system
   aux:
     allowedNamespaces:
       - headlamp
