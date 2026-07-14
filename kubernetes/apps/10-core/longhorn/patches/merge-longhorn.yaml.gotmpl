@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: longhorn-driver-deployer
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: longhorn-driver-deployer
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              memory: 64Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: longhorn-ui
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: longhorn-ui
+          resources:
+            requests:
+              cpu: 20m
+              memory: 128Mi
+            limits:
+              memory: 128Mi
