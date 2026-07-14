@@ -1,0 +1,65 @@
+global:
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+networkPolicies:
+  enabled: true
+
+csi:
+  kubeletRootDir: /var/lib/kubelet
+
+defaultSettings:
+  allowVolumeCreationWithDegradedAvailability: true
+  nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+  replicaAutoBalance: least-effort
+  taintToleration: "node-role.kubernetes.io/master:NoSchedule;node-role.kubernetes.io/control-plane:NoSchedule"
+
+persistence:
+  defaultClassReplicaCount: 2
+  volumeBindingMode: WaitForFirstConsumer
+
+preUpgradeChecker:
+  jobEnabled: false
+
+longhornManager:
+  log:
+    format: json
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 20m
+      memory: 128Mi
+
+longhornDriver:
+  log:
+    format: json
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 20m
+      memory: 128Mi
+
+longhornUI:
+  replicas: 1
+  resources:
+    limits:
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+httproute:
+  enabled: true
+  parentRefs:
+    - name: gateway-internal
+      namespace: kgateway-system
+      sectionName: https
+  hostnames:
+    - "longhorn.{{ .StateValues.cluster.domains.internal }}"
