@@ -12,12 +12,26 @@ networkPolicies:
 
 csi:
   kubeletRootDir: /var/lib/kubelet
+  attacherReplicaCount: 1
+  provisionerReplicaCount: 1
+  resizerReplicaCount: 1
+  snapshotterReplicaCount: 1
 
 defaultSettings:
   allowVolumeCreationWithDegradedAvailability: true
   nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
   replicaAutoBalance: least-effort
   taintToleration: "node-role.kubernetes.io/master:NoSchedule;node-role.kubernetes.io/control-plane:NoSchedule"
+  systemManagedCSIComponentsResourceLimits: >
+    {
+      "csi-attacher": {"requests": {"cpu": "10m", "memory": "64Mi"}, "limits": {"memory": "64Mi"}},
+      "csi-provisioner": {"requests": {"cpu": "10m", "memory": "64Mi"}, "limits": {"memory": "64Mi"}},
+      "csi-resizer": {"requests": {"cpu": "10m", "memory": "64Mi"}, "limits": {"memory": "64Mi"}},
+      "csi-snapshotter": {"requests": {"cpu": "10m", "memory": "64Mi"}, "limits": {"memory": "64Mi"}},
+      "longhorn-csi-plugin": {"requests": {"cpu": "10m", "memory": "64Mi"}, "limits": {"memory": "64Mi"}},
+      "node-driver-registrar": {"requests": {"cpu": "5m", "memory": "32Mi"}, "limits": {"memory": "32Mi"}},
+      "longhorn-liveness-probe": {"requests": {"cpu": "5m", "memory": "32Mi"}, "limits": {"memory": "32Mi"}}
+    }
 
 persistence:
   defaultClassReplicaCount: 2
@@ -39,21 +53,9 @@ longhornManager:
 longhornDriver:
   log:
     format: json
-  resources:
-    limits:
-      memory: 128Mi
-    requests:
-      cpu: 20m
-      memory: 128Mi
 
 longhornUI:
   replicas: 1
-  resources:
-    limits:
-      memory: 64Mi
-    requests:
-      cpu: 10m
-      memory: 64Mi
 
 httproute:
   enabled: true
