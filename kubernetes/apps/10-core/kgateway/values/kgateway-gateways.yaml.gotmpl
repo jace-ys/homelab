@@ -10,6 +10,16 @@ gateways:
       http:
         nodePort: 31080
         port: 80
+    deployment:
+      replicas: 2
+      podTemplate:
+        topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: DoNotSchedule
+            labelSelector:
+              matchLabels:
+                gateway.networking.k8s.io/gateway-name: gateway-external
     envoy:
       resources:
         limits:
@@ -29,6 +39,16 @@ gateways:
       http:
         nodePort: 32080
         port: 80
+    deployment:
+      replicas: 2
+      podTemplate:
+        topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: DoNotSchedule
+            labelSelector:
+              matchLabels:
+                gateway.networking.k8s.io/gateway-name: gateway-internal
     envoy:
       resources:
         limits:
