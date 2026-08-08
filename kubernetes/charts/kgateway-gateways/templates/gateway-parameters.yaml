@@ -18,6 +18,10 @@ spec:
     deployment:
       {{- toYaml . | nindent 6 }}
     {{- end }}
+    {{- with $gateway.podTemplate }}
+    podTemplate:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- with $gateway.envoy }}
     envoyContainer:
       {{- toYaml . | nindent 6 }}
