@@ -12,6 +12,6 @@ resource "cloudflare_dns_record" "internal" {
   name    = "*.${var.base_domain_internal}"
   type    = "A"
   content = oci_core_public_ip.lb_internal.ip_address
-  proxied = false
+  proxied = true
   ttl     = 3600
 }
