@@ -3,8 +3,8 @@ resource "cloudflare_dns_record" "external" {
   name    = "*.${var.base_domain_external}"
   type    = "A"
   content = oci_core_public_ip.lb_external.ip_address
-  proxied = false
-  ttl     = 3600
+  proxied = true
+  ttl     = 1
 }
 
 resource "cloudflare_dns_record" "internal" {
@@ -12,6 +12,6 @@ resource "cloudflare_dns_record" "internal" {
   name    = "*.${var.base_domain_internal}"
   type    = "A"
   content = oci_core_public_ip.lb_internal.ip_address
-  proxied = true
+  proxied = false
   ttl     = 3600
 }
