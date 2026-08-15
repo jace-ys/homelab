@@ -11,19 +11,12 @@ spec:
   sourceRepos:
     - {{ required "apps.repoURL is required" $.Values.apps.repoURL }}
   destinations:
-    {{- if $cfg.allowedNamespaces }}
     - namespace: default
       server: https://kubernetes.default.svc
     - namespace: "!argocd"
       server: https://kubernetes.default.svc
     {{- range $cfg.allowedNamespaces }}
     - namespace: {{ quote . }}
-      server: https://kubernetes.default.svc
-    {{- end }}
-    {{- else }}
-    - namespace: default
-      server: https://kubernetes.default.svc
-    - namespace: "!argocd"
       server: https://kubernetes.default.svc
     {{- end }}
   clusterResourceWhitelist:

@@ -1,0 +1,15 @@
+server:
+  priorityClassName: system-cluster-critical
+  replicaCount: 2
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 40m
+      memory: 256Mi
+  persistentVolume:
+    storageClassName: longhorn
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1

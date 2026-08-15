@@ -4,17 +4,25 @@ namespaces:
   headlamp: {}
   kgateway-system: {}
   longhorn-system: {}
+  monitoring: {}
 
 projects:
   core:
     allowedNamespaces:
+      - "!kube-node-lease"
+      - "!kube-public"
+      - "!kube-system"
       - cert-manager
       - external-secrets
       - kgateway-system
       - longhorn-system
   aux:
     allowedNamespaces:
+      - "!kube-node-lease"
+      - "!kube-public"
+      - "!kube-system"
       - headlamp
+      - monitoring
   apps:
     allowedNamespaces:
       - "!kube-node-lease"
