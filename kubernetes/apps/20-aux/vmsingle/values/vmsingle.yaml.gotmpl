@@ -11,12 +11,11 @@ server:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchLabels:
-                app.kubernetes.io/instance: {{ .Release.Name }}
-                app.kubernetes.io/component: server
-            topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/component: server
+          topologyKey: kubernetes.io/hostname
   resources:
     limits:
       memory: 512Mi
