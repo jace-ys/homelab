@@ -1,6 +1,5 @@
 controller:
   priorityClassName: system-cluster-critical
-
   resources:
     limits:
       memory: 128Mi

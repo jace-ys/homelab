@@ -11,6 +11,7 @@ gateways:
         nodePort: 31080
         port: 80
     deployment:
+      priorityClassName: system-cluster-critical
       replicas: 2
     podTemplate:
       topologySpreadConstraints:
@@ -40,6 +41,7 @@ gateways:
         nodePort: 32080
         port: 80
     deployment:
+      priorityClassName: system-cluster-critical
       replicas: 2
     podTemplate:
       topologySpreadConstraints:

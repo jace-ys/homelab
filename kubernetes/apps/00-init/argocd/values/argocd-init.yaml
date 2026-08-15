@@ -23,16 +23,13 @@ projects:
 
 apps:
   repoURL: https://github.com/jace-ys/homelab.git
-
   watchedDirs:
     - path: kubernetes/apps/*/*
     - path: kubernetes/apps/00-init/argocd
       exclude: true
-
   annotations:
     argocd.argoproj.io/manifest-generate-paths: .;/kubernetes/charts;/kubernetes/bases
     argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
-
   syncPolicy:
     automated:
       enabled: true
