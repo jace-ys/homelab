@@ -17,7 +17,7 @@ jobs:
       - name: Discover clusters
         id: discover
         run: |
-          CLUSTERS=$(yq '.values[0].clusters | keys' kubernetes/bases/clusters.yaml -o json | jq -c)
+          CLUSTERS=$(yq '.values[0].clusters | to_entries | map(select(.value.labels.cloud != "local")) | map(.key)' kubernetes/bases/clusters.yaml -o json | jq -c)
           echo "clusters=$CLUSTERS" >> "$GITHUB_OUTPUT"
 
   diff:

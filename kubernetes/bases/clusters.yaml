@@ -6,6 +6,7 @@ values:
           environment: dev
           region: uk-london-1
           cell: cell-01
+          cloud: local
       k3s.cell-01.uk-london-1.stg:
         labels:
           environment: stg
