@@ -1,0 +1,15 @@
+{{- range $name, $gateway := .Values.gateways }}
+{{- if gt (int (default 1 $gateway.deployment.replicas)) 1 }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: gateway-{{ $name }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: gateway-{{ $name }}
+{{- end }}
+{{- end }}

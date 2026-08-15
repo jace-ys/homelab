@@ -11,16 +11,16 @@ gateways:
         nodePort: 31080
         port: 80
     deployment:
-      priorityClassName: system-cluster-critical
       replicas: 2
     podTemplate:
+      priorityClassName: system-cluster-critical
       topologySpreadConstraints:
-          - maxSkew: 1
-            topologyKey: kubernetes.io/hostname
-            whenUnsatisfiable: DoNotSchedule
-            labelSelector:
-              matchLabels:
-                gateway.networking.k8s.io/gateway-name: gateway-external
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: gateway-external
     envoy:
       resources:
         limits:
@@ -41,16 +41,16 @@ gateways:
         nodePort: 32080
         port: 80
     deployment:
-      priorityClassName: system-cluster-critical
       replicas: 2
     podTemplate:
+      priorityClassName: system-cluster-critical
       topologySpreadConstraints:
-          - maxSkew: 1
-            topologyKey: kubernetes.io/hostname
-            whenUnsatisfiable: DoNotSchedule
-            labelSelector:
-              matchLabels:
-                gateway.networking.k8s.io/gateway-name: gateway-internal
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: gateway-internal
     envoy:
       resources:
         limits:
