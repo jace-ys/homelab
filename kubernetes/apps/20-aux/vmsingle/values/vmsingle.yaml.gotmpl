@@ -1,3 +1,5 @@
+nameOverride: vmsingle
+
 server:
   priorityClassName: system-cluster-critical
   replicaCount: 2
@@ -9,6 +11,16 @@ server:
       memory: 256Mi
   persistentVolume:
     storageClassName: longhorn
+  route:
+    enabled: true
+    parentRefs:
+      - name: gateway-internal
+        namespace: kgateway-system
+        sectionName: https
+    hostnames:
+      - "vmsingle.{{ .StateValues.cluster.domains.internal }}"
+  scrape:
+    enabled: true
 
 podDisruptionBudget:
   enabled: true
