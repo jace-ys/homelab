@@ -2,15 +2,30 @@ nameOverride: vmsingle
 
 server:
   priorityClassName: system-cluster-critical
+  statefulSet:
+    spec:
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
   replicaCount: 2
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/instance: {{ .Release.Name }}
+                app.kubernetes.io/component: server
+            topologyKey: kubernetes.io/hostname
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
     requests:
-      cpu: 40m
-      memory: 256Mi
+      cpu: 200m
+      memory: 512Mi
   persistentVolume:
     storageClassName: longhorn
+    size: 4Gi
   route:
     enabled: true
     parentRefs:
