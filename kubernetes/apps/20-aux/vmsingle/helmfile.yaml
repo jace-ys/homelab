@@ -1,0 +1,16 @@
+---
+bases:
+  - ../../../bases/clusters.yaml
+
+values:
+  - hierarchy:
+      - environment
+---
+bases:
+  - ../../../bases/releases.yaml.gotmpl
+
+releases:
+  - name: vmsingle
+    chart: oci://ghcr.io/victoriametrics/helm-charts/victoria-metrics-single
+    namespace: monitoring
+    version: 0.44.0
