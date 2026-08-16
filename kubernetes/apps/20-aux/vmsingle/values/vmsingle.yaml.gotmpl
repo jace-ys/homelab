@@ -44,8 +44,6 @@ server:
         sectionName: https
     hostnames:
       - "vmsingle.{{ .StateValues.cluster.domains.internal }}"
-  scrape:
-    enabled: true
   serviceMonitor:
     enabled: true
 
