@@ -1,7 +1,6 @@
 nameOverride: vmsingle
 
 server:
-  priorityClassName: system-cluster-critical
   statefulSet:
     spec:
       persistentVolumeClaimRetentionPolicy:
@@ -21,6 +20,18 @@ server:
     requests:
       cpu: 200m
       memory: 512Mi
+  podSecurityContext:
+    enabled: true
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  securityContext:
+    enabled: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
   persistentVolume:
     storageClassName: longhorn
     size: 4Gi
@@ -32,6 +43,7 @@ server:
         sectionName: https
     hostnames:
       - "vmsingle.{{ .StateValues.cluster.domains.internal }}"
+  retentionPeriod: 30d
   scrape:
     enabled: true
 
