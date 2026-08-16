@@ -1,0 +1,19 @@
+{{- if .Values.metrics.podMonitor.enabled }}
+{{- range $name, $gateway := .Values.gateways }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: gateway-{{ $name }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: gateway-{{ $name }}
+  podMetricsEndpoints:
+    - port: http-monitoring
+      {{- if $.Values.metrics.podMonitor.path }}
+      path: {{ $.Values.metrics.podMonitor.path | quote }}
+      {{- end }}
+{{- end }}
+{{- end }}
