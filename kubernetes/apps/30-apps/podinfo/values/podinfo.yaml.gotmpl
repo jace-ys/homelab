@@ -16,3 +16,6 @@ httpRoute:
       sectionName: https
   hostnames:
     - podinfo.{{ .StateValues.cluster.domains.external }}
+
+serviceMonitor:
+  enabled: true

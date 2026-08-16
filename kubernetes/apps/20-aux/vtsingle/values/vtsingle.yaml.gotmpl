@@ -1,6 +1,7 @@
 nameOverride: vtsingle
 
 server:
+  retentionPeriod: 30d
   statefulSet:
     spec:
       persistentVolumeClaimRetentionPolicy:
@@ -31,7 +32,8 @@ server:
         sectionName: https
     hostnames:
       - "vtsingle.{{ .StateValues.cluster.domains.internal }}"
-  retentionPeriod: 30d
+  serviceMonitor:
+    enabled: true
 
 podDisruptionBudget:
   enabled: true

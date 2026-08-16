@@ -1,6 +1,7 @@
 nameOverride: vmsingle
 
 server:
+  retentionPeriod: 30d
   statefulSet:
     spec:
       persistentVolumeClaimRetentionPolicy:
@@ -43,8 +44,9 @@ server:
         sectionName: https
     hostnames:
       - "vmsingle.{{ .StateValues.cluster.domains.internal }}"
-  retentionPeriod: 30d
   scrape:
+    enabled: true
+  serviceMonitor:
     enabled: true
 
 podDisruptionBudget:

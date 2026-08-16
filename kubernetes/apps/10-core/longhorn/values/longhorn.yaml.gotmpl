@@ -65,3 +65,7 @@ httproute:
       sectionName: https
   hostnames:
     - "longhorn.{{ .StateValues.cluster.domains.internal }}"
+
+metrics:
+  serviceMonitor:
+    enabled: true

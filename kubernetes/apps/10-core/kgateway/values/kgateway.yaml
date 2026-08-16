@@ -6,3 +6,5 @@ controller:
     requests:
       cpu: 20m
       memory: 128Mi
+  serviceMonitor:
+    enabled: true
