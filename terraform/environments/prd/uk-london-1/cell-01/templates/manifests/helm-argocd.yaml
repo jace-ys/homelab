@@ -72,10 +72,10 @@ spec:
     controller:
       resources:
         limits:
-          memory: 1Gi
+          memory: 512Mi
         requests:
-          cpu: 500m
-          memory: 1Gi
+          cpu: 200m
+          memory: 512Mi
 
     dex:
       enabled: true
