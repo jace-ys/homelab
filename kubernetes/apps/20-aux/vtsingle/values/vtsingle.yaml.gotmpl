@@ -1,0 +1,38 @@
+nameOverride: vtsingle
+
+server:
+  statefulSet:
+    spec:
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+  replicaCount: 2
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/component: server
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 40m
+      memory: 256Mi
+  persistentVolume:
+    storageClassName: longhorn
+    size: 4Gi
+  route:
+    enabled: true
+    parentRefs:
+      - name: gateway-internal
+        namespace: kgateway-system
+        sectionName: https
+    hostnames:
+      - "vtsingle.{{ .StateValues.cluster.domains.internal }}"
+  retentionPeriod: 30d
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
