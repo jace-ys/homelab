@@ -57,10 +57,10 @@ data "kustomization_overlay" "oci_ccm" {
               - name: oci-cloud-controller-manager
                 resources:
                   limits:
-                    memory: 64Mi
+                    memory: 128Mi
                   requests:
-                    cpu: 10m
-                    memory: 64Mi
+                    cpu: 20m
+                    memory: 128Mi
       EOF
   }
 }
