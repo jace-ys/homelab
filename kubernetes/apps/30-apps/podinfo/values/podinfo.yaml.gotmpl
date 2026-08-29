@@ -1,6 +1,8 @@
 ui:
   message: "Hello from podinfo.{{ .StateValues.cluster.domains.external }}!"
 
+priorityClassName: workload-apps
+
 resources:
   limits:
     memory: 32Mi

@@ -4,7 +4,7 @@ crds:
 global:
   leaderElection:
     namespace: {{ .Release.Namespace }}
-  priorityClassName: system-cluster-critical
+  priorityClassName: workload-core
 
 enableCertificateOwnerRef: true
 

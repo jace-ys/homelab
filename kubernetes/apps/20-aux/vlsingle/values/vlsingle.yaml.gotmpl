@@ -7,6 +7,7 @@ server:
       persistentVolumeClaimRetentionPolicy:
         whenDeleted: Delete
   replicaCount: 2
+  priorityClassName: workload-aux
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
