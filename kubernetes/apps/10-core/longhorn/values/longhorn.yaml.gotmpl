@@ -20,7 +20,7 @@ csi:
 defaultSettings:
   allowVolumeCreationWithDegradedAvailability: true
   nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
-  replicaAutoBalance: least-effort
+  replicaAutoBalance: best-effort
   taintToleration: "node-role.kubernetes.io/master:NoSchedule;node-role.kubernetes.io/control-plane:NoSchedule"
   systemManagedCSIComponentsResourceLimits: >
     {
@@ -45,10 +45,10 @@ longhornManager:
     format: json
   resources:
     limits:
-      memory: 128Mi
+      memory: 256Mi
     requests:
-      cpu: 20m
-      memory: 128Mi
+      cpu: 40m
+      memory: 256Mi
 
 longhornDriver:
   log:

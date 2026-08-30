@@ -13,7 +13,7 @@ gateways:
     deployment:
       replicas: 2
     podTemplate:
-      priorityClassName: system-cluster-critical
+      priorityClassName: workload-core
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -43,7 +43,7 @@ gateways:
     deployment:
       replicas: 2
     podTemplate:
-      priorityClassName: system-cluster-critical
+      priorityClassName: workload-core
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname

@@ -1,5 +1,5 @@
 controller:
-  priorityClassName: system-cluster-critical
+  priorityClassName: workload-core
   resources:
     limits:
       memory: 128Mi

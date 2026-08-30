@@ -7,7 +7,7 @@ namespaces:
   monitoring: {}
 
 projects:
-  core:
+  10-core:
     allowedNamespaces:
       - "!kube-node-lease"
       - "!kube-public"
@@ -16,14 +16,14 @@ projects:
       - external-secrets
       - kgateway-system
       - longhorn-system
-  aux:
+  20-aux:
     allowedNamespaces:
       - "!kube-node-lease"
       - "!kube-public"
       - "!kube-system"
       - headlamp
       - monitoring
-  apps:
+  30-apps:
     allowedNamespaces:
       - "!kube-node-lease"
       - "!kube-public"

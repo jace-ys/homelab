@@ -1,0 +1,18 @@
+{{- $items := list }}
+{{- range $name, $cfg := .Values.projects }}
+{{- $items = append $items $name }}
+{{- end }}
+{{- range $i, $item := reverse (sortAlpha $items) }}
+{{- $name := index (splitList "-" $item) 1 }}
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: workload-{{ $name }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+value: {{ mul 100000 (add 1 $i) }}
+globalDefault: false
+preemptionPolicy: PreemptLowerPriority
+description: {{ printf "Used for workloads in the %s project" $name | quote }}
+{{- end }}
